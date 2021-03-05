@@ -1,0 +1,34 @@
+{% extends "bootstrap/base.html" %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% block head %}
+    <title>Portal interno: ZumaMarkets</title>   
+    <script src="https://kit.fontawesome.com/2fa60861de.js" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="{{url_for('.static',filename='styles/styles.css')}}">
+    {{super()}}
+        
+
+    {% endblock %}
+    
+</head>
+<body>
+   
+{% block content %}
+
+
+{% endblock %}
+{% block scripts %}
+{{super()}}
+<script>
+    $(document).ready(()=>{
+        $(function () {
+            $('[data-toggle="tooltip"]').tooltip()
+        })
+    })
+    
+  </script>
+
+{% endblock %}
+</body>
+</html>

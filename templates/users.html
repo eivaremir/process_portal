@@ -1,0 +1,28 @@
+{% extends 'layout.html'%}
+{% from 'helpers/_forms.html' import render_field %}
+
+{%block container%}
+<h1>Usuarios</h1>
+
+    <table class="table table-sm">
+        <thead>
+            {% for column in users.cursor.description %}
+                <th  scope="col" >
+                    {{ column_names[ column[0] ]}}
+                </th >
+            {% endfor %}            
+        </thead>
+        <tbody>
+            {% for row in users %}
+               <tr>
+                {% for column in row %}
+                  <td>{{ column}}</td>
+                {% endfor %}
+               </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    
+{% endblock %}    
+</div>
+

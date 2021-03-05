@@ -1,1 +1,8 @@
-hola
+{% extends 'layout.html' %}
+
+{%block container%}
+<div class="col-md-6" style="padding: 20px 0"><img style="width: 100%;" src="{{url_for('.static',filename='ZumaMarkets.svg')}}"></img style="width: 100%;"></div>
+<br>
+<h1>Bienvenido al portal interno</h1>
+<p>Por favor, inicia sesión</p>
+{%endblock%}

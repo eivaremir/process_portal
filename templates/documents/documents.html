@@ -1,0 +1,39 @@
+{% extends 'layout.html'%}
+{% from 'helpers/_forms.html' import render_field %}
+
+{%block container%}
+<h1>Documentos</h1>
+<div class="row">
+    <nav class="navbar navbar-light bg-light">
+        <div class="container-fluid">
+        <span class="navbar-text">
+            <a href="{{ url_for('edit_document',doc_no = doc_no) }}" class="btn btn-sm btn-primary" style="color:white" data-toggle="tooltip" data-placement="top" title="Editar Documento"><i class="fas fa-plus"></i> Crear</a>
+        </span>
+        </div>
+    </nav>
+</div>
+<div class="row">
+    <table class="table table-sm table-striped">
+        <thead>
+            <th>Link</th>
+            {% for column in docs.cursor.description %}
+                <th  scope="col" >{{ column_names[ column[0] ]}}</th >
+            {% endfor %}            
+        </thead>
+        <tbody>
+            {% for row in docs %}
+               <tr>
+                <td>
+                    <a class='btn-sm btn-primary' href="{{url_for('document',doc_no=row[0])}}">Ver</a>
+                    <a class='btn-sm btn-warning' href="{{url_for('edit_document',doc_no=row[0])}}">editar</a>
+                </td>
+                {% for column in row %}
+                  <td>{{ column}}</td>
+                {% endfor %}
+               </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+    
+{% endblock %}
