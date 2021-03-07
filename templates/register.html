@@ -6,7 +6,11 @@
 <div class="col-md-12 col-md-offset-1">
     <h3>Register</h3>
     <form action="" method="POST">
-        
+        <div class="form-group">
+            <!-- RENDER FIELDS WITH BOOTSTRAP CLASSES -->
+            {{ render_field(form.name, class='form-control', placeholder='Nombre y apellido') }}
+            
+        </div>
 
         <div class="form-group">
             <!-- RENDER FIELDS WITH BOOTSTRAP CLASSES -->
@@ -20,11 +24,6 @@
         <div class="form-group">
             <!-- RENDER FIELDS WITH BOOTSTRAP CLASSES -->   
             {{ render_field(form.confirm_password, class='form-control', placeholder='Confirm Password') }}
-        </div>
-
-        <div class="form-check">
-            {{ form.accept(class_='form-check-input') }}
-            <label for="" class='form-check-bale'>Acepto terminos y condiciones</label>
         </div>
 
 

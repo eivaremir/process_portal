@@ -3,6 +3,12 @@
 {%block container%}
 <div class="col-md-6" style="padding: 20px 0"><img style="width: 100%;" src="{{url_for('.static',filename='ZumaMarkets.svg')}}"></img style="width: 100%;"></div>
 <br>
-<h1>Bienvenido al portal interno</h1>
-<p>Por favor, inicia sesión</p>
+
+
+    {% if current_user.is_authenticated %}
+    <h1>Bienvenido al portal interno {{user.name}}</h1>
+    {% else %}
+    <h1>Bienvenido al portal interno</h1>
+    <p>Por favor, <a href="{{url_for('.login')}}">inicia sesión</a>  </p>
+    {%endif%}
 {%endblock%}
