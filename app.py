@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, flash, jsonify, redirect,url_for
+from flask import Flask, render_template, request, flash, jsonify, redirect,url_for, abort
 from flask_bootstrap import Bootstrap
 from flask_login import LoginManager,login_user, logout_user, login_required, current_user
 
@@ -16,10 +16,14 @@ from flask_sqlalchemy import SQLAlchemy
 # utilities
 from forms import LoginForm, RegisterForm, DocumentForm
 from models import *
+import acl
+
 import markdown
 import json
 import requests
 import os
+from miracle import Acl
+
 app = Flask(__name__)
 
 login_manager = LoginManager()
@@ -30,6 +34,9 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///internal_portal.sqlite3'
 app.config['SECRET_KEY']='12345678'
 
 
+@app.errorhandler(403)
+def page_not_found(error):
+    return render_template('errors/403.html',user=current_user,acl = acl.acl),403 # retorna status 200 de exito
 
 
 
@@ -45,7 +52,7 @@ def load_user(id):
 # views
 @app.route("/")
 def home():
-	return render_template("home.html",active='home',user=current_user)
+	return render_template("home.html",active='home',user=current_user,acl = acl.acl)
 
 
 @app.route("/register",methods=['GET','POST'])
@@ -67,7 +74,7 @@ def register():
         
         
 	print('Auth: '+str(current_user.is_authenticated))
-	return render_template("register.html",title='Register', form=form, active='register',user=current_user)    
+	return render_template("register.html",title='Register', form=form, active='register',user=current_user,acl = acl.acl)    
 
 @app.route("/login",methods=['GET','POST'])
 def login():
@@ -89,7 +96,7 @@ def login():
 		#print("Nueva sesión creada con los valores: " + form.username.data +" "+ form.password.data + " resultado: "+str(current_user.is_authenticated))
 	print('Auth: '+str(current_user.is_authenticated))
 	
-	return render_template("login.html",form=form)
+	return render_template("login.html",form=form,acl = acl.acl)
 
 @app.route("/logout")
 def logout():
@@ -102,6 +109,11 @@ def logout():
 #####################################################################################
 # USERS
 #####################################################################################
+
+
+
+
+
 @app.route("/users",methods=['GET'])
 @login_required
 def users():
@@ -112,16 +124,53 @@ def users():
 		"email":"Correo electrónico",
 		"created_at": "Fecha de creación"
 	}
-	return render_template("users.html",users = users,column_names=column_names,user=current_user)
+	return render_template("users.html",users = users,column_names=column_names,user=current_user,acl = acl.acl)
+#####################################################################################
+# Roles
+#####################################################################################
+
+@app.route("/roles",methods=['GET'])
+@login_required
+def roles():
+	if not acl.has_view_access("role",current_user):
+		abort(403)
+	return render_template("roles.html",active="Roles",user=current_user,acl = acl.acl)
+
+@app.route("/roles/update",methods=['POST'])
+def update_roles():
+	try:
+		content = request.get_json() # returns dict
+		if not content: #js fix
+			content = json.loads(request.get_data())
+		if content['grant']:
+			acl.acl.grant(content['role'],content['resource'],content['permission'])
+		else:
+			acl.acl.revoke(content['role'],content['resource'],content['permission'])
+	except Exception as ex:
+		return jsonify({
+			"status": False,
+			"exception":ex
+		})
+	return jsonify({
+		"status": True,
+		"access":{
+			"role":content['role'],
+			"resource":content['resource'],
+			"permissions": list(acl.acl.which_permissions(content['role'],content['resource']))
+		}
+	})
 
 #####################################################################################
 # DOCUMENTS
 #####################################################################################
 
+
 @app.route("/documents",methods=['GET'])
 @login_required
 def documents():
-
+	if not acl.has_view_access("document",current_user):
+		abort(403)
+	
 	docs =db.engine.execute("select * from documents;")# Document.query.all()
 
 	column_names={
@@ -131,10 +180,12 @@ def documents():
 		"path":"Directorio",
 		"process":"Proceso"
 	}
-	return render_template("documents/documents.html",active="documents",docs=docs,column_names=column_names,user=current_user)
+	return render_template("documents/documents.html",active="documents",docs=docs,column_names=column_names,user=current_user,acl = acl.acl)
 
 @app.route("/document/create",methods=['GET','POST'])
 def create_document():
+	if not acl.has_view_access("document",current_user):
+		abort(403)
 	form = DocumentForm(request.form)
 	
 	if request.method == 'POST':
@@ -156,11 +207,12 @@ def create_document():
 
 	roles=Role.query.all()
 	print(roles)
-	return render_template('/documents/create.html',form=form,roles=roles,user=current_user)
+	return render_template('/documents/create.html',form=form,roles=roles,active="documents",user=current_user,acl = acl.acl)
 
 @app.route("/document/save/<doc_no>",methods=['POST'])
 @login_required
 def save_document(doc_no):
+	
 	content = request.get_json() # returns dict
 	if not content: #js fix
 		content = json.loads(request.get_data())
@@ -196,13 +248,14 @@ def delete_document(doc_no):
 @app.route("/document/edit/<doc_no>",methods=['GET','POST'])
 @login_required
 def edit_document(doc_no):
+	if (not acl.acl.check_any(current_user.role.split(","),"document","update") or   acl.acl.check_any(current_user.role.split(","),"document","full_control") ):
+		abort(403)
 	if request.method == 'POST': #and form.validate():
 		#print(request.form['markdown-code'])
 		#from os import listdir
 		#print(listdir())
 		with open('static/documents/{doc_no}.md'.format(doc_no=doc_no), 'w') as f:
 			f.write(request.form['markdown-code'])
-		#return render_template("document.html",f=f,md=md,edit = edit,doc_no=doc_no)
 		#redirect(url_for('.document')+"/"+doc_no)
 		return redirect(url_for('document',doc_no=doc_no))
 	else:
@@ -213,7 +266,7 @@ def edit_document(doc_no):
 			f="## El documento {doc_no} no se encuentra en este servidor".format(doc_no=doc_no)
 			edit = False
 		md = markdown.markdown(f)
-		return render_template("documents/document.html",f=f,md=md,edit = edit,doc_no=doc_no,user=current_user)
+		return render_template("documents/document.html",active="documents",f=f,md=md,edit = edit,doc_no=doc_no,user=current_user,acl = acl.acl)
 
 
 
@@ -235,6 +288,8 @@ def render_markdown():
 @app.route("/document/<doc_no>",methods=['GET'])
 @login_required
 def document(doc_no):
+	if not acl.has_view_access("document",current_user):
+		abort(403)
 	#f = url_for('static', filename='/documents/{doc_no}.md'.format(doc_no=doc_no))
 	#f = open("/static/documents/{doc_no}.md".format(doc_no=doc_no), "r")
 	try:
@@ -243,7 +298,7 @@ def document(doc_no):
 		f="## El documento {doc_no} no se encuentra en este servidor".format(doc_no=doc_no)
 
 	f = markdown.markdown(f)
-	return render_template("documents/document.html",f=f,md = markdown,open = open,doc_no=doc_no,user=current_user)
+	return render_template("documents/document.html",active="documents",f=f,md = markdown,open = open,doc_no=doc_no,user=current_user,acl = acl.acl)
 
 # INIT APP
 
@@ -259,4 +314,4 @@ with app.app_context():
 if __name__ == '__main__':
 
 	
-	app.run(host="192.168.0.107", debug=True)
+	app.run(host="192.168.0.107")

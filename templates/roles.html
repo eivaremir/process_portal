@@ -1,0 +1,88 @@
+{% extends 'layout.html'%}
+{% from 'helpers/_forms.html' import render_field %}
+
+{%block container%}
+<h1>Roles</h1>
+<hr>
+<div class="accordion accordion-flush" id="accordion-roles">
+    <div class="accordion-item">
+      
+        {% for resource, perms in acl.get().items() %}
+            <h2 class="accordion-header" id="flush-heading-{{resource}}">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapse-{{resource}}" aria-expanded="false" aria-controls="flush-collapseOne">
+                {{resource}}
+                </button>
+            </h2>
+            <div id="flush-collapse-{{resource}}" class="accordion-collapse collapse" aria-labelledby="flush-heading-{{resource}}" data-bs-parent="#accordion-roles">
+                <div class="accordion-body">
+                    <table class="table table-hover table-sm">
+                        <thead>
+                          <tr>
+                            <th scope="col">Rol</th>
+                            {% for perm in perms %}
+                                <th scope="col">{{perm}}</th>
+                            {% endfor %}
+                          </tr>
+                        </thead>
+                        <tbody>
+                            {% for rol in acl.get_roles()%}
+                            <tr>
+                                <th scope="row">{{rol}}</th>
+                                {% for perm in perms %}
+                                    {% if perm in acl.which_permissions(rol, resource) %}
+                                        <td><input class="form-check-input" type="checkbox" name="{{resource}}-{{rol}}-{{perm}}" id="{{resource}}-{{rol}}-{{perm}}" checked></td>
+                                    {% else %}
+                                        <td><input class="form-check-input" type="checkbox" name="{{resource}}-{{rol}}-{{perm}}" id="{{resource}}-{{rol}}-{{perm}}"></td>
+                                    {% endif %}
+                                {% endfor %}    
+                            </tr>
+                            {% endfor %}
+                          
+                        </tbody>
+                      </table>
+                </div>
+            </div>
+        {% endfor %}
+            
+      
+    </div>
+  </div>
+{% endblock %}
+{% block scripts%}
+{{super()}}
+<script>
+function prepareJson(str,grant){
+    arr = str.split("-")
+    return {
+        "resource": arr[0],
+        "role": arr[1],
+        "permission":arr[2],
+        "grant":grant
+    }
+}
+async function update_access(json){
+        let config ={
+            mode: 'no-cors',
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json, text/plain, */*',
+                'Content-Type': 'application/json; charset=UTF-8'
+            },
+            body: JSON.stringify(json)
+        }
+        const response = await fetch('/roles/update',config)
+        //console.log(response)
+        const data = await response.json()
+        console.log(data)
+        
+        //document.getElementById("markdown-content").innerHTML = data.html
+
+        //return data
+    }
+document.querySelectorAll(".form-check-input").forEach((el)=>{
+    el.addEventListener("click",(el)=>{
+       update_access( prepareJson(el.target.getAttribute("name"),el.target.checked))
+    })
+})
+</script>
+{% endblock %}

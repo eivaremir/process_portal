@@ -59,7 +59,7 @@ class User(db.Model, UserMixin):
     password = db.Column(db.String(100),nullable=False)
     email = db.Column(db.String(50),unique=True,nullable=False)
     created_at = db.Column(db.DateTime,nullable=False,default=datetime.datetime.now())
-    
+    role = db.Column(db.String(),nullable=False)
     def verify_password(self,p_password):
         return check_password_hash(self.password, p_password)
     
@@ -74,6 +74,7 @@ class User(db.Model, UserMixin):
         db.session.commit()
         return user
 
+    
     @classmethod
     def get_by_username(cls, username):
         return User.query.filter_by(username=username).first()

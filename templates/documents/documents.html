@@ -7,7 +7,9 @@
     <nav class="navbar navbar-light bg-light">
         <div class="container-fluid">
         <span class="navbar-text">
-            <a href="{{ url_for('create_document') }}" class="btn btn-sm btn-primary" style="color:white" data-toggle="tooltip" data-placement="top" title="Editar Documento"><i class="fas fa-plus"></i> Crear</a>
+            {% if acl.check_any(user.role.split(","),"document","create") or  acl.check_any(user.role.split(","),"document","full_control")  %}
+                <a href="{{ url_for('create_document') }}" class="btn btn-sm btn-primary" style="color:white" data-toggle="tooltip" data-placement="top" title="Editar Documento"><i class="fas fa-plus"></i> Crear</a>
+            {% endif %}
         </span>
         </div>
     </nav>
@@ -19,22 +21,28 @@
             {% for column in docs.cursor.description %}
                 <th  scope="col" >{{ column_names[ column[0] ]}}</th >
             {% endfor %} 
+            {% if acl.check_any(user.role.split(","),"document","delete") or  acl.check_any(user.role.split(","),"document","full_control")  %}
             <th>Delete</th>           
+            {% endif %}
         </thead>
         <tbody>
             {% for row in docs %}
                <tr>
+                   
                 <td>
                     <a class='btn-sm btn-primary' href="{{url_for('document',doc_no=row[0])}}">Ver</a>
-                    <a class='btn-sm btn-warning' href="{{url_for('edit_document',doc_no=row[0])}}">editar</a>
+                    {% if acl.check_any(user.role.split(","),"document","update") or  acl.check_any(user.role.split(","),"document","full_control")  %}    
+                        <a class='btn-sm btn-warning' href="{{url_for('edit_document',doc_no=row[0])}}">editar</a>
+                    {% endif %}
                 </td>
                 {% for column in row %}
                   <td>{{ column}}</td>
                 {% endfor %}
-                
+                {% if acl.check_any(user.role.split(","),"document","delete") or  acl.check_any(user.role.split(","),"document","full_control")  %}
                 <td>
                     <a class='btn-sm btn-danger' href="{{url_for('delete_document',doc_no=row[0])}}">Eliminar</a>
                 </td>
+                {% endif %}
                </tr>
             {% endfor %}
         </tbody>
