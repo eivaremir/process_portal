@@ -1,19 +1,77 @@
 from werkzeug.security import generate_password_hash, check_password_hash
-
 import datetime
-
 from flask_login import UserMixin
-
 from flask_sqlalchemy import SQLAlchemy
 
+##########################################
+# EMAIL
+import smtplib
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
+##########################################
+
 db =SQLAlchemy()
+
+class Setup(db.Model):
+    __tablename__ = 'setup'
+    id_setup = db.Column(db.String(30),primary_key=True)
+    value= db.Column(db.String(30),nullable=False)
+    description = db.Column(db.String(100),nullable=False)
+    @classmethod
+    def get_all_dict(cls, fields =[]):
+        return dict((x, y) for x, y in [x for x in (db.engine.execute("select * from Setup;") if fields ==[] else db.engine.execute("select {fields} from Setup;".format(fields= str(fields).replace("]","").replace("[","").replace("'","")))) ]) 
+
+
+
+    
+    @classmethod
+    def get_by_id(cls, id):
+        # busca la línea en la bd
+        return Setup.query.filter_by(id_setup=id).first()
+
+    @classmethod
+    def update_element(cls, id,value):
+        
+        # busca la línea task en la base de datos segun la información de la vista
+        setup = Setup.get_by_id(id)
+
+        # si ese objeto no existe...
+        if setup is None:
+            return False
+        
+        # si el objeto existe... modifica la línea con la información de la vista
+        setup.value=value
+
+        # aplica los cambios en la bd
+        db.session.add(setup)
+        db.session.commit()
+        
+        return setup
 
 class Role(db.Model):
     __tablename__ = 'roles'
     id_role = db.Column(db.Integer,primary_key=True)
-    name = name = db.Column(db.String(30),nullable=False)
+    name =  db.Column(db.String(30),nullable=False)
     description = db.Column(db.String(200),nullable=False)
 
+
+class Email(db.Model):
+    __tablename__ = 'emails'
+    id_email = db.Column(db.Integer,primary_key=True)
+    html = db.Column(db.String(),nullable=False)
+    subject = db.Column(db.String(255),nullable=False)
+    email_from = db.Column(db.String(30),nullable=False)
+    
+
+    def send(self,to,s):
+        self.msg = MIMEMultipart('alternative')
+        self.msg['Subject'] = self.subject
+        self.msg['From'] = self.email_from
+        self.msg['To'] = to
+        self.msg.attach(MIMEText(self.html, 'html'))
+        
+    
+ 
 class Document(db.Model):
 
     __tablename__ = 'documents'

@@ -1,0 +1,40 @@
+{% extends 'layout.html'%}
+{% from 'helpers/_forms.html' import render_field %}
+
+{%block container%}
+<div class="col-md-6 col-md-offset-1">
+    
+
+    {% for form in forms%}
+    
+        
+        {% if type(form) == forms_setup.SMTPSetupForm%}
+        <form action="/setup/smtp" method="POST">
+        <div class="form-group">
+            <!-- RENDER FIELDS WITH BOOTSTRAP CLASSES -->
+            {{ render_field(form.email_from, class='form-control', placeholder='ejemplo@dominioejemplo.com' ,value=settings["email_from"]) }}
+            
+        </div>
+        <div class="form-group">
+            <!-- RENDER FIELDS WITH BOOTSTRAP CLASSES -->
+            {{ render_field(form.email_from_password, class='form-control', placeholder='contraseña del usuario',value=settings["email_from_password"]) }}
+            
+        </div>
+
+        <div class="form-group">
+            <!-- RENDER FIELDS WITH BOOTSTRAP CLASSES -->
+            {{ render_field(form.smtp_server, class='form-control', placeholder='smtp.ejemplo.com',value= settings["smtp_server"]) }}
+            
+        </div>
+        <div class="form-group">
+            <!-- RENDER FIELDS WITH BOOTSTRAP CLASSES -->
+            {{ render_field(form.smtp_port, class='form-control', placeholder='456',value= settings["smtp_port"]) }}
+            
+        </div>
+        <button type="submit" class="btn btn-primary">Login</button>
+        {% endif %}
+        
+    </form>
+    {% endfor %}
+</div>
+{% endblock %}

@@ -15,6 +15,7 @@ from flask_sqlalchemy import SQLAlchemy
 """
 # utilities
 from forms import LoginForm, RegisterForm, DocumentForm
+import forms_setup
 from models import *
 import acl
 
@@ -300,10 +301,38 @@ def document(doc_no):
 	f = markdown.markdown(f)
 	return render_template("documents/document.html",active="documents",f=f,md = markdown,open = open,doc_no=doc_no,user=current_user,acl = acl.acl)
 
+
+#####################################################################################
+# SETUP
+#####################################################################################
+@app.route("/setup",methods=['GET'])
+@login_required
+def setup():
+	forms = [forms_setup.SMTPSetupForm(request.form)]
+	settings = Setup.get_all_dict(['id_setup','value'])
+
+	return render_template("setup.html",settings=settings,type=type,forms_setup =forms_setup, forms=forms,active="setup",user=current_user,acl = acl.acl)
+
+
+@app.route("/setup/smtp",methods=['POST'])
+def smtp_setup():
+	form = forms_setup.SMTPSetupForm(request.form)
+	if request.method == 'POST' and form.validate():
+		for id_setup ,value in request.form.items():
+			if not Setup.update_element(id_setup,value)	:
+				flash("error")
+			else:
+				pass#flash("Configuraciones SMTP guardadas exitosamente")
+
+	#return Setup.get
+	return redirect(url_for('.setup'))
+
+@app.route("/debug",methods=['GET'])
+def debug():
+	return str(Setup.get_all_dict(['id_setup','value']))
+
+
 # INIT APP
-
-
-		# crear tablas
 with app.app_context():
 	#iniciar db en el app
 	db.init_app(app)
@@ -314,4 +343,4 @@ with app.app_context():
 if __name__ == '__main__':
 
 	
-	app.run(host="192.168.0.107")
+	app.run(debug=True)
