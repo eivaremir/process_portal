@@ -1,2 +1,4 @@
 __pycache__
 *.exe
+react-test
+*.sqlite3

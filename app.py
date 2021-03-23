@@ -303,6 +303,28 @@ def document(doc_no):
 
 
 #####################################################################################
+# EMAILS
+#####################################################################################
+@app.route("/email/<email_address>/unsubscribe", methods=['GET'])
+def unsubscribe(email_address):
+	return redirect("https://zumamarkets.com")
+
+
+
+
+#####################################################################################
+# REDIRECTION LINKS
+#####################################################################################
+@app.route("/rl/<redirect_name>", methods=['GET'])
+def redirect_link(redirect_name):
+	link = RedirectLink.get_redirect_link(redirect_name)
+	if link:
+		print(link)
+		return redirect(link)	
+
+	return redirect("https://zumamarkets.com")
+
+#####################################################################################
 # SETUP
 #####################################################################################
 @app.route("/setup",methods=['GET'])
@@ -330,6 +352,9 @@ def smtp_setup():
 @app.route("/debug",methods=['GET'])
 def debug():
 	return str(Setup.get_all_dict(['id_setup','value']))
+
+
+
 
 
 # INIT APP

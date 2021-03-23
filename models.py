@@ -70,7 +70,55 @@ class Email(db.Model):
         self.msg['To'] = to
         self.msg.attach(MIMEText(self.html, 'html'))
         
+class RedirectLink(db.Model):
+    __tablename__ = 'redirect_links'
+    link_name = db.Column(db.String(),primary_key=True) 
+    redirect_to = db.Column(db.String(),nullable=False) 
+    @classmethod
+    def get_by_name(cls, link_name):
+        # busca la línea en la bd
+        return  RedirectLink.query.filter_by(link_name=link_name).first()
     
+    @classmethod
+    def get_redirect_link(cls,name):
+        redirect = RedirectLink.get_by_name(name)
+
+        # si ese objeto no existe...
+        if redirect is None:
+            return False
+        
+        return redirect.redirect_to
+
+
+class Recipent(db.Model):
+    __tablename__ = 'recipents'
+    address = db.Column(db.String(),primary_key=True) 
+    subscribed  = db.Column(db.Boolean(),nullable=False)
+    tags = db.Column(db.String(),nullable=False)
+    @classmethod
+    def get_by_address(cls, address):
+        # busca la línea en la bd
+        return Recipent.query.filter_by(address=address).first()
+
+    @classmethod
+    def unsubscribe(cls,address):
+        # busca la línea task en la base de datos segun la información de la vista
+        recipent = Recipent.get_by_address(address)
+
+        # si ese objeto no existe...
+        if recipent is None:
+            return False
+        
+        # si el objeto existe... modifica la línea con la información de la vista
+        recipent.subscribed = False
+        
+
+        # aplica los cambios en la bd
+        db.session.add(recipent)
+        db.session.commit()
+        
+        return recipent
+
  
 class Document(db.Model):
 
