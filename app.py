@@ -315,6 +315,11 @@ def unsubscribe(email_address):
 #####################################################################################
 # REDIRECTION LINKS
 #####################################################################################
+@app.route("/rl", methods=['GET'])
+def rl():
+	return redirect("https://zumamarkets.com")
+
+
 @app.route("/rl/<redirect_name>", methods=['GET'])
 def redirect_link(redirect_name):
 	link = RedirectLink.get_redirect_link(redirect_name)
