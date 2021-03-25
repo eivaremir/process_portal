@@ -4,3 +4,4 @@ react-test
 *.sqlite3
 node_modules
 *.json
+acl
