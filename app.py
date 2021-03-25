@@ -55,6 +55,13 @@ def load_user(id):
 def home():
 	return render_template("home.html",active='home',user=current_user,acl = acl.acl)
 
+react = ""
+reactDOM = ""
+
+@app.route("/new/")
+def home_new():
+	return render_template("index.html",react=react,reactDOM=reactDOM)
+
 
 @app.route("/register",methods=['GET','POST'])
 def register():
@@ -107,6 +114,49 @@ def logout():
     flash("Has cerrado sesión")
 
     return redirect(url_for('.login'))
+
+#####################################################################################
+# API
+#####################################################################################
+@app.route("/session/start",methods=['POST'])
+def start_session():
+	try:
+		content = request.get_json() # returns dict
+		if not content: #js fix
+			content = json.loads(request.get_data())
+		if content['username'] and content['password']:
+			# data received properly
+			user = User.get_by_email(content['username'])
+			if user and user.verify_password(content['password']):
+				login_user(user)
+				if current_user.is_authenticated:
+					return jsonify({
+						"status": True,
+						"username":content['username'],
+						"password":content['password'],
+						"message":f"User {content['username']} logged in"
+					})
+				else:
+					return jsonify({
+						"status": False,
+						"exception":f"User {content['username']} not logged in"
+					})
+			else:
+				# wrong user or password
+				return jsonify({
+					"status": False,
+					"exception":f"User {content['username']} either doesn't exist or has wrong password"
+				})
+		else:
+			return jsonify({
+				"status": False,
+				"exception":"Either username or password is missing"
+			}),403
+	except Exception as ex:
+		return jsonify({
+			"status": False,
+			"exception": str(ex)
+		})
 #####################################################################################
 # USERS
 #####################################################################################
@@ -358,9 +408,9 @@ def smtp_setup():
 def debug():
 	return str(Setup.get_all_dict(['id_setup','value']))
 
-
-
-
+@app.route("/f/d/<path>",methods=['GET'])
+def download_file(path):
+	return send_file(path, as_attachment=True,)
 
 # INIT APP
 with app.app_context():
@@ -370,7 +420,11 @@ with app.app_context():
 	# crear tablas
 	db.create_all()
 
-if __name__ == '__main__':
+react = "react.production.min.js"
+reactDOM = "react-dom.production.min.js"
 
+if __name__ == '__main__':
+	react = "react.development.js"
+	reactDOM = "react-dom.development.js"
 	
 	app.run(debug=True)
