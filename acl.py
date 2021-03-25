@@ -2,16 +2,19 @@ from miracle import Acl
 import pickle
 
 
+try:{
+    file = open('acl', 'rb')
 
-#acl = Acl()
-file = open('acl', 'rb')
+    # dump information to that file
+    # FIX LIBRARY
+    acl = pickle.load(file)
 
-# dump information to that file
-# FIX LIBRARY
-acl = pickle.load(file)
+    # close the file
+    file.close()
 
-# close the file
-file.close()
+}
+except:
+    acl = Acl()
 
 acl.add_roles([
     'everyone', 
