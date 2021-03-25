@@ -2,7 +2,7 @@ from miracle import Acl
 import pickle
 
 
-try:{
+try:
     file = open('acl', 'rb')
 
     # dump information to that file
@@ -12,7 +12,7 @@ try:{
     # close the file
     file.close()
 
-}
+
 except:
     acl = Acl()
 
