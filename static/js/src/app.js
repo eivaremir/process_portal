@@ -4,14 +4,20 @@ import Sidenav from './components/Sidenav.js'
 import Header from './components/Header/Header.js'
 
 import Login from './components/Login/Login.js'
+
+
+// ViewStats
+import ViewStats from './components/SystemView/SystemView'
+import SystemView from './components/SystemView/SystemView'
+
 function App() {
 
    
 
 
-    const [sideNavOpen, setSideNavOpen] = React.useState(true);
+    //const [sideNavOpen, setSideNavOpen] = React.useState(true);
     const [isLoggedIn, setIsLoggedIn] = React.useState(false);
-
+    const [goto, setgoto] = useState(undefined)
 
 
     React.useEffect( () => {
@@ -47,6 +53,12 @@ function App() {
         })
         const data = await res.json()
         setIsLoggedIn(data.status)
+
+        const urlParams = new URLSearchParams(window.location.search);
+        try{
+            return <ReactRouterDOM.Redirect to={urlParams.get("goto")} />
+        }
+        catch(ex){}
     }
     const openSlideNav = (e) =>{
         let slidenav = document.querySelector("#"+e.target.dataset.target)
@@ -58,8 +70,11 @@ function App() {
         <ReactRouterDOM.BrowserRouter>
             <Header isLoggedIn={isLoggedIn} logOut={logOut}/>
             <Sidenav id="main-slidenav"/>
-            
+            { (new URLSearchParams(window.location.search)).get("goto") && <ReactRouterDOM.Redirect to={(new URLSearchParams(window.location.search)).get("goto")}/> }
             { !isLoggedIn && <ReactRouterDOM.Route path="/login2" render={()=>  <Login onLogIn={onLogIn} /> } />}
+            { isLoggedIn ? 
+                <ReactRouterDOM.Route path="/system/viewstats" render={()=>  <SystemView /> } /> 
+                : <ReactRouterDOM.Redirect to="/login2?goto=/system/viewstats" />}
         </ReactRouterDOM.BrowserRouter>
     )
 }

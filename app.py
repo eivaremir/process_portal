@@ -35,6 +35,9 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///internal_portal.sqlite3'
 app.config['SECRET_KEY']='12345678'
 
 
+def __react__():
+	return render_template("index.html",react=react,reactDOM=reactDOM)
+
 @app.errorhandler(403)
 def page_not_found(error):
     return render_template('errors/403.html',user=current_user,acl = acl.acl),403 # retorna status 200 de exito
@@ -42,6 +45,7 @@ def page_not_found(error):
 
 
 # VIEWS
+
 
 
 
@@ -194,10 +198,14 @@ def system_stats():
 		}),403
 	return jsonify({
 		"status": True,
-		"stats":[
-			{ "memory": memory }
-		]
+		"stats":{
+			"memory": memory 
+		}
+		
 	})
+@app.route("/system/viewstats")
+def view_system_stats():
+	return __react__()
 
 #####################################################################################
 # USERS
