@@ -183,7 +183,21 @@ def session():
 		response["username"] = current_user.email
 	return jsonify(response)
 
-
+@app.route("/system/stats")
+def system_stats():
+	try:
+		memory = os.popen("free -m").readlines()
+	except Exception as ex:
+		return jsonify({
+			"status": False,
+			"Exception": str(ex)
+		}),403
+	return jsonify({
+		"status": True,
+		"stats":[
+			{ "memory": memory }
+		]
+	})
 
 #####################################################################################
 # USERS
