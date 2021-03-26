@@ -61,7 +61,9 @@ reactDOM = ""
 @app.route("/new/")
 def home_new():
 	return render_template("index.html",react=react,reactDOM=reactDOM)
-
+@app.route("/login2")
+def login2():
+	return render_template("index.html",react=react,reactDOM=reactDOM)
 
 @app.route("/register",methods=['GET','POST'])
 def register():
@@ -118,6 +120,20 @@ def logout():
 #####################################################################################
 # API
 #####################################################################################
+
+@app.route("/session/end",methods=["GET"])
+def end_session():
+	logout_user()
+	if current_user.is_authenticated:
+		return jsonify({
+			"status":False,
+			"exception":"something went wrong"
+		})
+	else: return jsonify({
+		"status":True,
+		"message":"user logged out"
+	})
+
 @app.route("/session/start",methods=['POST'])
 def start_session():
 	try:
@@ -157,6 +173,18 @@ def start_session():
 			"status": False,
 			"exception": str(ex)
 		})
+
+@app.route("/session/",methods=['GET'])
+def session():
+	response ={
+		"authenticated":current_user.is_authenticated,
+	}
+	if response['authenticated']:
+		response["username"] = current_user.email
+	return jsonify(response)
+
+
+
 #####################################################################################
 # USERS
 #####################################################################################

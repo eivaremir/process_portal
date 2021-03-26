@@ -5,13 +5,15 @@
     {% block head %}
     <title>Portal interno: ZumaMarkets</title>   
     <script src="https://kit.fontawesome.com/2fa60861de.js" crossorigin="anonymous"></script>
-    <link rel="stylesheet" href="{{url_for('.static',filename='styles/styles.css')}}">
+    
     <link rel="stylesheet" href="{{url_for('.static',filename='materialize/css/materialize.min.css')}}">
+    
+    <link rel="stylesheet" href="{{url_for('.static',filename='styles/styles.css')}}">
     {% if react %}
     <script src="{{url_for('.static',filename='js/'+react)}}" crossorigin></script>
     <script src="{{url_for('.static',filename='js/'+reactDOM)}}" crossorigin></script>
     {% endif %}
-    <script src="{{url_for('.static',filename='js/react-router.min.js')}}" crossorigin></script>
+    <script src="{{url_for('.static',filename='js/react-router-dom.min.js')}}" crossorigin></script>
 
     {{super()}}
         
@@ -37,7 +39,8 @@
   </script>
 
 <script src="{{url_for('.static',filename='materialize/js/materialize.min.js')}}" crossorigin ></script>
-<script src="{{url_for('.static',filename='js/build/index.js')}}" crossorigin type='module'></script>
+<script src="{{url_for('.static',filename='js/functions.js')}}"></script>
+<script src="{{url_for('.static',filename='js/build/app.js')}}" crossorigin type='module'></script>
 {% endblock %}
 </body>
 </html>
