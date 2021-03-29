@@ -1,5 +1,4 @@
 
-
 function Login({ onLogIn }) {
     const [username, setusername] = React.useState("")
     const [password, setpassword] = React.useState("")
@@ -8,7 +7,8 @@ function Login({ onLogIn }) {
         onLogIn(username,password)
     }
 
-
+    console.log("rendering Login")
+    //debugger
     return (
         <div className="login-wrapper">
             <div className="login-container">

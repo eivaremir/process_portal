@@ -34,10 +34,14 @@ input[type=text]:focus,input[type=password]:focus, input.valid{
     box-shadow: 0 1px 0 0 #132e7f !important;
 
 }
+.justify-content-center{
+    justify-content: center;
+}
 #root{
     min-height: 100vh;
     display: flex;
     flex-direction: column;
+    padding-top: 70px;
 }
 nav.header img.logo{
     width: 200px;
@@ -47,12 +51,26 @@ nav.header{
     padding: 0 30px;
     background: #132e7f;
     position: fixed;
+    top:0;
 }
 a{
-    text-decoration: none;
+    text-decoration: none !important;
+}
+.breadcrumb-item:not(.breadcrumb-container :first-child){
+    content: '>';
+    color: gray
+}
+.breadcrumb-item, .breadcrumb::before{
+    color: gray
+}
+
+.breadcrumb-container :last-child{
+    color: #132e7f !important;
+    font-weight: 700;
+    
 }
 .login-wrapper{
-    height: 100vh;
+    
     display: flex;
     justify-content: center;
     align-items: center;
@@ -72,4 +90,33 @@ a{
 }
 .login-container .submit-group{
     margin: 25px;
+}
+.content{
+    margin: 20px 33px;
+}
+
+
+.document-item:hover{
+    background: rgb(230,230,230);
+    transition: .3;
+    cursor: pointer;
+
+
+/*
+
+EDITORJS
+
+*/
+
+
+.ce-block--focused .ce-block__content{
+    box-shadow: 0 0 10px -3px gray;
+    transition: .5s;
+    border-radius: 3px;
+}
+.codex-editor{
+    background: rgba(0,0,0,0.05);
+}
+.ce-block__content{
+    background: white;
 }

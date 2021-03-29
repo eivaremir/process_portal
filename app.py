@@ -207,6 +207,86 @@ def system_stats():
 def view_system_stats():
 	return __react__()
 
+
+@app.route("/documents2")
+def documents2():
+	return __react__()
+
+@app.route("/documents/get/")
+@app.route("/documents/get/<document>")
+def documents_get(document=False):
+	
+	if document:
+		print(Document.query.filter_by(id_document=document).first().data.replace('"',r'\"'))
+		try:
+			return jsonify({
+					document: {
+						"data": json.loads(Document.query.filter_by(id_document=document).first().data.replace('"',r'\"').replace("'",'"').replace('\"'))
+					}
+				})
+		except Exception as ex:
+			return jsonify({
+				"status": False,
+				"exception": str(ex)
+			})
+
+	else:
+		res = db.engine.execute("select * from documents;")
+		
+		cnames =  [ cname[0] for cname in [c for c in res.cursor.description ]]
+		res = [d for d in res]
+		res2 =[list(tupl) for tupl in res]
+		
+		parsed = []
+		
+		for d in range(len(res2)):
+			parsed_doc = {}
+			for c in range(len(cnames)):
+				parsed_doc[cnames[c]] = res2[d][c]
+				#print(f"column {c} {cnames[c]} data {d} {res2[d][c]}")
+			#print("----------------------------")
+			parsed.append(parsed_doc)
+
+		return jsonify({
+			"status": True,
+			"parsed":parsed,
+			"columns": cnames,
+			#"documents" :(str([doc for doc in res]).replace("(","[").replace(")","]").replace("'",'"'))
+			#"documents" :(str([doc for doc in res]))
+			"documents": res2,
+			
+			#"parsed":[{[x]:arr2[x]} for x in [c for c in range(len(cnames))]] 
+		})
+
+@app.route("/documents/save",methods=['PUT'])
+def document_save():
+	try:
+		content = request.get_json() # returns dict
+
+		if not content: #js fix
+			
+			content = json.loads(request.get_data())
+		
+		#print(content['document_data'])
+		#print(content['document_data'].__str__())
+		
+		
+		
+		Document.create_element(
+			content['document_code'],
+			content['document_title'],
+			content['document_lang'],
+			data=json.dumps(content['document_data']))
+		
+	except Exception as ex:
+		return jsonify({
+			"status": False,
+			"Exception": str(ex)
+		})
+	content["status"] = True
+	return jsonify(content)
+
+
 #####################################################################################
 # USERS
 #####################################################################################

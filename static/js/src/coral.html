@@ -1,0 +1,255 @@
+<style>
+.panel-body.scroll.mCustomScrollbar._mCS_1.mCS-autoHide.mCS_no_scrollbar{
+color:#377cda !important;}
+$.input.form-control.promocode{
+color:#ccc !important;}
+
+p.comission-detail{
+float:left;
+position:relative;
+top:5px;
+font-weight: bold;
+}
+</style>
+<script>
+
+function setFees(){
+f = function(ev){
+    
+    document.querySelectorAll("p.comission-detail").forEach((item,i)=>{
+        try{
+	item.style.display="none"
+	}
+	catch{console.log("Comission detail missing")}
+    })
+	ev.target.parentElement.querySelectorAll("p.comission-detail")[0].style.display = "block"
+    
+}
+
+p_btc = document.createElement("p")
+p_btc.innerText ="Amount to be deposited will depend on network fees and price rate changes"
+p_btc.className="comission-detail"
+btc=document.querySelector("input[onchange*=Bitcoin]")
+btc.parentElement.append(p_btc)
+////////////////////////////////////////
+
+p_xrp = document.createElement("p")
+p_xrp.innerText ="Amount to be deposited will depend on network fees and price rate changes"
+p_xrp.className="comission-detail"
+xrp=document.querySelector("input[onchange*=XRP]")
+xrp.parentElement.append(p_xrp)
+
+///////////////////////////////////////////////////////////////
+
+p_eth = document.createElement("p")
+p_eth.innerText ="Amount to be deposited will depend on network fees and price rate changes"
+p_eth.className="comission-detail"
+eth=document.querySelector("input[onchange*=ETH]")
+eth.parentElement.append(p_eth)
+
+/////////////////////////////////////////////////////////////////////
+
+p_btc.style.display = "none"
+p_eth.style.display = "none"
+p_xrp.style.display = "none"
+
+radios = document.querySelectorAll("input[type=radio]")
+
+radios.forEach((item,i)=>{
+    item.addEventListener("click",f)
+})
+
+
+
+}
+
+setFees()
+</script>
+<script>
+
+/////////////////////////////////////////////////////////////////////////////
+methodSelector = document.querySelector("select#method")
+cryptoTextBox = document.querySelector("input[name=crypto_currency]")
+
+
+feeTable = document.createElement("div")
+feeTable.innerHTML = "<table class='table'><thead><tr><th scope='col'>Currency</th><th scope='col'>Fee</th></tr></thead><tbody><tr id='fee-btc'><th scope='row'>BTC</th><td>0.001</td></tr><tr id='fee-xrp'><th scope='row'>XRP</th><td>1</td></tr><tr id='fee-eth'><th scope='row'>ETH</th><td>0.025 - 0.075</td></tr>  </tbody></table>"
+feeTable.style.display = "none"
+
+crypto_div = document.getElementById("Crypto")
+crypto_div.appendChild(feeTable)
+
+methodSelector.addEventListener("change",(ev)=>{
+if(ev.target.value == "Crypto"){
+
+	feeTable.style.display = "block"
+document.getElementById("change_buttons").children[0].setAttribute("disabled",true)
+}
+else{
+	feeTable.style.display = "none"
+document.getElementById("change_buttons").children[0].removeAttribute("disabled")
+}
+})
+
+
+
+
+// DEFINE WALLET ADDRES INPUT FIELD
+wallet = document.querySelector("input[name=wallet]")
+
+
+document.querySelector("input[name=crypto_currency]").parentElement.parentElement.parentElement.style.display="none"
+
+customCurr_div = document.createElement("div")
+customCurr_div.className ="form-group"
+customCurr_div.innerHTML = '<label class="col-md-3 col-xs-12 control-label">Cryptocurrency:</label><div class="col-md-9 col-xs-12"><div class="input-group"><span class="input-group-addon"><i class="fas fa-wallet fa-sm" aria-hidden="true"></i></span><select class="form-control select" id="custom_currency" value=""><option>Select...</option><option value="BTC">Bitcoin</option><option value="XRP">Ripple</option><option value="ETH">Ethereum</option></select></div><span class="help-block">Enter the Currency</span></div>'
+
+// INSERT NEW WALLET INPUT
+document.getElementById("Crypto").firstElementChild.style.display="none"
+new_walletadd = document.createElement('div')
+new_walletadd.innerHTML = '<div class="form-group" ><label class="col-md-3 col-xs-12 control-label">Wallet Address</label><div class="col-md-9 col-xs-12"><div class="input-group"><span class="input-group-addon"><i class="fas fa-wallet fa-sm" aria-hidden="true"></i></span><input name="wallet-tag" value="" type="text" class="form-control"></div><span class="help-block">Enter the Wallet Address</span></div></div>'
+document.getElementById("Crypto").prepend(new_walletadd )
+// CREATE DESTINATION TAG
+detag = document.createElement('div')
+detag.innerHTML='<div class="form-group" ><label class="col-md-3 col-xs-12 control-label">Destination Tag</label><div class="col-md-9 col-xs-12"><div class="input-group"><span class="input-group-addon"><i class="fas fa-wallet fa-sm" aria-hidden="true"></i></span><input name="detag" value="" type="text" class="form-control"></div><span class="help-block">Enter the Ripple destination tag</span></div></div>'
+
+
+// INSERT CURRENCY SELECTOR
+document.getElementById("Crypto").appendChild(customCurr_div)
+customCurr = document.querySelector("select#custom_currency")
+
+// INSERT DETAG AND HIDE IT
+document.getElementById("Crypto").appendChild(detag)
+detag.style.display='none'
+
+console.log("Adding custom currency event listener")
+
+customCurr.addEventListener("change",(ev)=>{
+	console.log("changed currency")	
+    	document.querySelector("input[name=crypto_currency]").value = ev.target.value
+    	if(ev.target.value=="Select..."){
+	    	document.getElementById("change_buttons").children[0].setAttribute("disabled",true)
+	}
+	else document.getElementById("change_buttons").children[0].removeAttribute("disabled")
+})
+
+document.getElementById("custom_currency").addEventListener("change",(ev)=>{
+	let re_xrp = /(ripple|xrp)/gi
+	let re_eth = /eth/gi 
+	let re_btc = /(bitcoin|btc)/gi   
+	console.log("changed currency")	
+	if(re_btc.exec(ev.target.value)){
+		document.getElementById("fee-btc").style.display =""
+		document.getElementById("fee-xrp").style.display ="none"
+		document.getElementById("fee-eth").style.display ="none"
+		detag.style.display ="none"
+	}
+	else if(re_xrp.exec(ev.target.value)){
+		document.getElementById("fee-btc").style.display ="none"
+		document.getElementById("fee-xrp").style.display =""
+		document.getElementById("fee-eth").style.display ="none"
+		// INSERT DESTINATION TAG
+		detag.style.display ="block"
+		
+	}
+	else if(re_eth.exec(ev.target.value)){
+		document.getElementById("fee-btc").style.display ="none"
+		document.getElementById("fee-xrp").style.display ="none"
+		document.getElementById("fee-eth").style.display =""
+		detag.style.display ="none"
+	}
+	else{
+		document.getElementById("fee-btc").style.display =""
+		document.getElementById("fee-xrp").style.display =""
+		document.getElementById("fee-eth").style.display =""
+		detag.style.display ="none"
+		
+	}
+
+})
+
+input_newwallet = document.querySelector("input[name=wallet-tag]")
+
+console.log("Adding detag event listener")
+
+document.querySelector("input[name=detag]").addEventListener("keypress",updateWalletInfo)
+document.querySelector("input[name=wallet-tag]").addEventListener("keypress",updateWalletInfo)
+document.querySelector("input[name=detag]").addEventListener("change",updateWalletInfo)
+document.querySelector("input[name=wallet-tag]").addEventListener("change",updateWalletInfo)
+
+function updateWalletInfo(){
+	wallet.value=input_newwallet.value + " Destination tag: "+document.querySelector("input[name=detag]").value
+}
+</script>
+
+ <script>
+function insertBanner(){
+if(window.location.href === "https://clientzone.zumafx.com/deposit"){
+console.log('Estoy en depósitos')
+banner = document.createElement('div')
+
+banner.style.position="relative"
+
+container = document.createElement("div")
+banner.append(container)
+
+container.style.position="absolute"
+
+
+bannerStr = '<div style="width: 100%;border: 1px solid rgb(220, 220, 220);/* height: 205px; */height: fit-content;position: relative;">     <div style="position: absolute;width: 100%;top: 60%;transform: translate(0,-50%);">        <div class="col-md-6 col-sm-6 col-xs-6"></div>                <div class="col-md-6 col-sm-6 col-xs-6" style="margin: 0px;padding: 0px;left: -9px;top: auto;bottom: auto;">            <div id="banner-text" style="font-family: Lato; width: 90%;">                <p style="color: white;z-index: 0;/* position: absolute; */font-size: 1.5em;padding: 0;margin-bottom: 13px;">Opera <b>hasta 3</b> trades <b>sin riesgo</b></p>                <a href="http://bit.ly/ZumaFx3RFCyberMonday" class="" style="font-size:1.2em;background: rgb(73,180,195);color: white;border: 1px rgba(84,200,217,1) solid;font-weight: bold;padding: 5px;border-radius: 8px;box-shadow:0px 0px 16px 2px rgba(84,200,217,1)">Inicia Ahora</a>            </div>        </div>    </div>    <center>        <img class="img-responsive" src="https://i.ibb.co/z7TLbVM/banner3.png" alt="Cyber Monday" border="0" style="min-height: 140px;">    </center></div>'
+
+
+
+
+banner.innerHTML=bannerStr
+
+document.getElementById('client-fields').prepend(banner)
+document.getElementById('banner-text').style.fontFamily = "'Lato'"
+}
+}
+<script>document.tidioChatLang = document.querySelector("html").getAttribute("lang");</script>
+</script>
+<script src="//code.tidio.co/bwmfaszccqprmywarc4obp2q1fglsal9.js" async></script>
+<script>
+
+// ********************** UTM TOGGLE ****************************
+ 
+const getQueryParams = (url) => {
+  let qParams = {};
+  // create a binding tag to use a property called search
+  let anchor = document.createElement('a');
+  // assign the href URL of the anchor tag
+  anchor.href = url;
+  // search property returns URL query string
+  let qStrings = anchor.search.substring(1);
+  let params = qStrings.split('&');
+  for (let i = 0; i < params.length; i++) {
+    let pair = params[i].split('=');
+      qParams[pair[0]] = decodeURIComponent(pair[1]);
+    }
+    return qParams;
+};
+
+ 
+
+let utmRegisterRgx = /https:\/\/clientzone.zumamarkets.com\/\/\?utm_source=(.*)&utm_medium=(.*)&utm_campaign=(.*)&utm_content=(.*)/
+document.querySelectorAll("a[href='https://clientzone.zumamarkets.com/register']").forEach((el)=>{
+    var newURL = window.location.protocol + "//" + window.location.host + "/" + window.location.pathname + window.location.search;
+    if (utmRegisterRgx.test(newURL)){
+        query = getQueryParams(newURL)
+        el.setAttribute('href',el.getAttribute('href')+`?utm_source=${query.utm_source}&utm_medium=${query.utm_medium}&utm_campaign=${query.utm_campaign}&utm_content=${query.utm_content}&`)
+    }
+    
+})
+
+ 
+
+document.querySelectorAll("a[href='https://clientzone.zumamarkets.com/register-demo']").forEach((el)=>{
+    var newURL = window.location.protocol + "//" + window.location.host + "/" + window.location.pathname + window.location.search;
+    if (utmRegisterRgx.test(newURL)){
+        query = getQueryParams(newURL)
+        el.setAttribute('href',el.getAttribute('href')+`?utm_source=${query.utm_source}&utm_medium=${query.utm_medium}&utm_campaign=${query.utm_campaign}&utm_content=${query.utm_content}&`)
+    }
+    
+})
+// ********************** END UTM TOGGLE ****************************</script>

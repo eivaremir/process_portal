@@ -128,7 +128,9 @@ class Document(db.Model):
     lang = db.Column(db.String(2),nullable=False) #ISO 639-1 
     path =db.Column(db.String(200),nullable=False)
     process =db.Column(db.String(200),nullable=False)
-    
+    data =db.Column(db.String(),nullable=True)
+    tags =db.Column(db.String(),nullable=True)
+
     @classmethod
     def delete_element(cls,id):
         doc = Document.query.filter_by(id_document=id).first()
@@ -137,8 +139,8 @@ class Document(db.Model):
         db.session.commit()
         return True
     @classmethod
-    def create_element(cls,id_document,title,lang,path,process):
-        doc = Document(id_document=id_document,title=title,lang=lang,path=path,process=process)
+    def create_element(cls,id_document,title,lang,path="",process="DEFAULT",tags="",data=""):
+        doc = Document(id_document=id_document,title=title,lang=lang,path=path,process=process,data=data,tags=tags)
         
         # registrar nueva entrada en la BD
         db.session.add(doc)
