@@ -301,6 +301,9 @@ def document_save():
 	return jsonify(content)
 
 
+@app.route("/links")
+def links():
+	return __react__()
 #####################################################################################
 # USERS
 #####################################################################################
@@ -522,6 +525,27 @@ def redirect_link(redirect_name):
 		return redirect(link)	
 
 	return redirect("https://zumamarkets.com")
+
+
+@app.route("/rl/get/",methods=['GET'])
+def get_all_rl():
+	res = db.engine.execute("select * from redirect_links;")
+	cnames =  [ cname[0] for cname in [c for c in res.cursor.description ]]
+	
+	res2 =[list(tupl) for tupl in [d for d in res]]
+	print(res2)
+	parsed = []
+	for d in range(len(res2)):
+		parsed_doc = {}
+		for c in range(len(cnames)):
+			parsed_doc[cnames[c]] = res2[d][c]
+		parsed.append(parsed_doc)
+	return jsonify({
+		"status": True,
+		"columns": cnames,
+		"data": res2,
+		"parsed": parsed
+	})
 
 #####################################################################################
 # SETUP

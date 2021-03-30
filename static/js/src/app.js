@@ -4,7 +4,7 @@ import Sidenav from './components/Sidenav.js'
 import Header from './components/Header/Header.js'
 import Breadcrumb from './components/Breadcrumb.js'
 import Login from './components/Login/Login.js'
-
+import Links from './components/Links.js'
 
 // ViewStats
 import ViewStats from './components/SystemView/SystemView'
@@ -91,7 +91,7 @@ function App() {
     //debugger
     return (
         <ReactRouterDOM.BrowserRouter>
-            <Header isLoggedIn={isLoggedIn} logOut={logOut}/>
+            <Header openSlideNav={openSlideNav} isLoggedIn={isLoggedIn} logOut={logOut}/>
             <Sidenav id="main-slidenav"/>
             
             {/* IF I'M ALREADY LOGGED AND THERES A GOTO, REDIRECT THERE */}
@@ -116,6 +116,9 @@ function App() {
                 }} /> 
                 <ReactRouterDOM.Route path="/documents2" render={()=> { 
                     return isLoggedIn ? <DocumentsView setsectionlist={setsectionlist} /> :  <ReactRouterDOM.Redirect to={`/login2?goto=/documents2${window.location.search}`} />
+                }} /> 
+                <ReactRouterDOM.Route path="/links" render={()=> { 
+                    return isLoggedIn ? <Links /> :  <ReactRouterDOM.Redirect to={`/login2?goto=/links${window.location.search}`} />
                 }} /> 
             </div>
         </ReactRouterDOM.BrowserRouter>
