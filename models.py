@@ -130,9 +130,24 @@ class Document(db.Model):
     process =db.Column(db.String(200),nullable=False)
     data =db.Column(db.String(),nullable=True)
     tags =db.Column(db.String(),nullable=True)
-
     @classmethod
-    def delete_element(cls,id):
+    def update_element(cls,id_document,title,lang,path="",process="DEFAULT",tags="",data=""):
+        document = Document.get_by_id(id_document)
+        if document:
+
+            document.title = title
+            document.lang = lang
+            document.path= path
+            document.process = process
+            document.tags = tags
+            document.data= data
+            db.session.add(document)
+            db.session.commit()
+            return document
+        
+        return False
+    @classmethod
+    def delete_element(cls,id_document,title,lang,path="",process="DEFAULT",tags="",data=""):
         doc = Document.query.filter_by(id_document=id).first()
         if doc is None: return False
         db.session.delete(doc)

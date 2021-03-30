@@ -217,12 +217,11 @@ def documents2():
 def documents_get(document=False):
 	
 	if document:
-		print(Document.query.filter_by(id_document=document).first().data.replace('"',r'\"'))
+		
 		try:
 			return jsonify({
-					document: {
-						"data": json.loads(Document.query.filter_by(id_document=document).first().data.replace('"',r'\"').replace("'",'"').replace('\"'))
-					}
+						"status":True,
+						"data": json.loads(Document.query.filter_by(id_document=document).first().data)
 				})
 		except Exception as ex:
 			return jsonify({
@@ -242,14 +241,18 @@ def documents_get(document=False):
 		for d in range(len(res2)):
 			parsed_doc = {}
 			for c in range(len(cnames)):
-				parsed_doc[cnames[c]] = res2[d][c]
+				try:
+					parsed_doc[cnames[c]] =json.loads( res2[d][c])
+				
+				except:
+					parsed_doc[cnames[c]] = res2[d][c]
 				#print(f"column {c} {cnames[c]} data {d} {res2[d][c]}")
 			#print("----------------------------")
 			parsed.append(parsed_doc)
 
 		return jsonify({
 			"status": True,
-			"parsed":parsed,
+			"parsed": parsed,
 			"columns": cnames,
 			#"documents" :(str([doc for doc in res]).replace("(","[").replace(")","]").replace("'",'"'))
 			#"documents" :(str([doc for doc in res]))
@@ -270,6 +273,17 @@ def document_save():
 		#print(content['document_data'])
 		#print(content['document_data'].__str__())
 		
+		if Document.get_by_id(content['document_code']):
+			Document.update_element(
+							content['document_code'],
+							content['document_title'],
+							content['document_lang'],
+							data=json.dumps(content['document_data']))
+			return jsonify({
+				"status": True,
+				"action": "updated",
+				
+			})
 		
 		
 		Document.create_element(

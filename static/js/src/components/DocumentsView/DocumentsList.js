@@ -15,7 +15,7 @@ function DocumentsList({ onShowCreate, onDocumentSelected, documents}) {
                 <thead>
                     <tr>
                         {documents && documents.columns.map((column,c)=>(
-                            <td key={"column-name-"+c}>{column}</td>
+                            c < documents.columns.length-1 ? <td key={"column-name-"+c}>{column}</td> : null
                         ))}
                         
                     </tr>
@@ -23,7 +23,8 @@ function DocumentsList({ onShowCreate, onDocumentSelected, documents}) {
                 <tbody>
                     {
                         documents && documents.documents.map((document,d)=>(
-                            <DocumentItem onDocumentSelected={onDocumentSelected} document={document} key={d}/>
+                            
+                             <DocumentItem onDocumentSelected={onDocumentSelected} document={document} key={d}/>
                             
 
                         ))

@@ -39,7 +39,9 @@ function App() {
     
     React.useEffect( () => {
         // set goto if its present
-        setgoto((new URLSearchParams(window.location.search)).get("goto"))
+        try{
+            setgoto(window.location.search.match(/(?<=goto\=).*/g)[0])
+        }catch(ex){}
         //setloc(window.location.pathname)
         // toggle class in root if path is login
         if (window.location.pathname ==="/login2"){
@@ -50,6 +52,7 @@ function App() {
             document.getElementById("root").classList.remove("justify-content-center")
             console.log("class removed")
         }
+        
     })
     
     const fetchSession = async () => {
@@ -112,7 +115,7 @@ function App() {
                     return isLoggedIn ? <SystemView /> :  <ReactRouterDOM.Redirect to="/login2?goto=/system/viewstats" />
                 }} /> 
                 <ReactRouterDOM.Route path="/documents2" render={()=> { 
-                    return isLoggedIn ? <DocumentsView setsectionlist={setsectionlist} /> :  <ReactRouterDOM.Redirect to="/login2?goto=/documents2" />
+                    return isLoggedIn ? <DocumentsView setsectionlist={setsectionlist} /> :  <ReactRouterDOM.Redirect to={`/login2?goto=/documents2${window.location.search}`} />
                 }} /> 
             </div>
         </ReactRouterDOM.BrowserRouter>

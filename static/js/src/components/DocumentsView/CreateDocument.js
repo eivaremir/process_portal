@@ -10,12 +10,13 @@ class CreateDocument extends React.Component{
     constructor(props){
         super(props)
         this.state = {
-            document_name: '',
-            document_lang: 'en',
-            document_tags: 'test',
-            document_data: '',
-            document_code: ''
+            document_name: this.props.document_name,
+            document_lang: this.props.document_lang,
+            document_tags: this.props.document_tags,
+            document_data: this.props.document_data,
+            document_code: this.props.document_code
         }
+        
     }
 
     onNameChanged(e){
@@ -36,6 +37,7 @@ class CreateDocument extends React.Component{
             console.log(`lang: ${this.state.document_lang} code: ${this.state.document_code} name: ${this.state.document_name}`)
             if (this.state.document_lang != '' && this.state.document_code != '' && outputData!= '' && this.state.document_name != ''){
                 console.log('Article data: ', outputData)
+                
                 return fetch("/documents/save",{
                     method: 'PUT',
                     headers: { "Content-Type":"application/json" },
@@ -70,21 +72,22 @@ class CreateDocument extends React.Component{
                     </button>
                 </div>
                 
-                <h1>Create Document</h1>
+                <h1>{this.props.title}</h1>
                 <div className="row" style={{margin: "40px 5px"}}>
                     <div className="input-field col s4">
                         <label htmlFor="document_code">Code</label>
-                        <input id="document_code" type="text" className="validate" onChange={(e) => this.setState({document_code: e.target.value})}/>
+                        <input id="document_code" value={this.state.document_code} type="text" className="validate" onChange={(e) => this.setState({document_code: e.target.value})}/>
                         
                     </div>
                     <div className="input-field col s4">
                         <label htmlFor="document_name">Document title</label>
-                        <input id="document_name" type="text" className="validate" onChange={this.onNameChanged.bind(this)}/>
+                        {console.log(this.state.document_name)}
+                        <input id="document_name" type="text" className="validate" value={this.state.document_name} onChange={this.onNameChanged.bind(this)}/>
                         
                     </div>
                     <div className="input-field col s4">
                         <label>Document language</label>
-                        <select  onChange={this.onLangChanged.bind(this)}>
+                        <select value={this.state.document_lang}  onChange={this.onLangChanged.bind(this)}>
                             <option value="es">Spanish</option>
                             <option value="en">Enlgish</option>
                         </select>
@@ -105,6 +108,7 @@ class CreateDocument extends React.Component{
 
         const editorJSConfig = {};
         const editor = new EditorJS({
+            data: this.state.document_data,
             placeholder: 'Start writing here...',
             holder:"editor",
             tools: { 
@@ -169,5 +173,13 @@ class CreateDocument extends React.Component{
         })
     }
 }
+
+CreateDocument.defaultProps = {
+    document_name: '',
+    document_lang: 'en',
+    document_tags: 'test',
+    document_data: '',
+    document_code: ''
+  };
 
 export default CreateDocument
