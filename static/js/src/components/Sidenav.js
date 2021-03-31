@@ -16,7 +16,9 @@ function Sidenav({id}) {
                 <li><a href="#!">Second Link</a></li>
                 <li><div className="divider"></div></li>
                 <li><a className="subheader">Subheader</a></li>
-                <li><a className="waves-effect" href="#!">Third Link With Waves</a></li>
+                <li><a className="waves-effect" href="#!">Third Link With Waves</a></li> 
+                <li><ReactRouterDOM.Link to="/links"  className="waves-effect" href="#!">Links </ReactRouterDOM.Link> </li>
+                <li><ReactRouterDOM.Link to="/documents2"  className="waves-effect" href="#!">Documents</ReactRouterDOM.Link> </li>
             </ul>
     )
 }

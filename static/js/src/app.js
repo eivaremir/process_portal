@@ -106,7 +106,7 @@ function App() {
                 {isLoggedIn && <Breadcrumb sectionlist={sectionlist} />}
 
 
-
+                
                 {/*{ FOR EACH PATH, RENDER IF ITS LOGGGED IN OR REDIRECT WITH GOTO />}*/}
                 <ReactRouterDOM.Route path="/new" render={()=> { 
                     return isLoggedIn ? <a onClick={openSlideNav} data-target="main-slidenav" className="waves-effect waves-light btn">button</a> :  <ReactRouterDOM.Redirect to="/login2?goto=/new" />
