@@ -185,6 +185,8 @@ def session():
 	}
 	if response['authenticated']:
 		response["username"] = current_user.email
+		response["role"] = current_user.role
+		response["name"] = current_user.name
 	return jsonify(response)
 
 @app.route("/system/stats")
@@ -303,6 +305,15 @@ def document_save():
 
 @app.route("/links")
 def links():
+	return __react__()
+
+
+@app.route("/recipents")
+def recipents():
+	return __react__()
+@app.route("/recipents/get")
+def get_recipents():
+
 	return __react__()
 #####################################################################################
 # USERS
