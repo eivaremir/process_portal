@@ -21,7 +21,7 @@ function App() {
 
 
     //const [sideNavOpen, setSideNavOpen] = React.useState(true);
-    const [isLoggedIn, setIsLoggedIn] = React.useState(false);
+    const [isLoggedIn, setIsLoggedIn] = React.useState(0);
     const [goto, setgoto] = React.useState(undefined)
     const [sectionlist, setsectionlist] = React.useState(['Documents'])
     const [session, setsession] = React.useState({})
@@ -97,45 +97,63 @@ function App() {
     //debugger
     return (
         <ReactRouterDOM.BrowserRouter>
-            <Header openSlideNav={openSlideNav} isLoggedIn={isLoggedIn} logOut={logOut}/>
-            <Sidenav  isLoggedIn={isLoggedIn} session={session} id="main-slidenav"/>
+            <>
+            {/* IF WE DONT KNOW IF IM LOGGED IN OR NOT */}
+            { isLoggedIn === 0 ? 
+                
+                    <div style={{    width: "300px",textAlign: "center", position:" absolute", top: "50%", left: "50%", transform: "translate(-50%,-50%)"}}>
+                        <span>Loading...</span>
+                        <div class="progress" style={{height: "7px"}}>
+                            <div class="indeterminate" style={{background: "#132e7f",height: "10px"}}></div>
+                        </div>
+                    </div>            
+                :
+                
+                <>
+                {/* IF WE ALREADY KNOW IF IM LOGGED IN OR NOT */}
+                    <Header openSlideNav={openSlideNav} isLoggedIn={isLoggedIn} logOut={logOut}/>
+                    <Sidenav  isLoggedIn={isLoggedIn} session={session} id="main-slidenav"/>
+                    
+                    {/* IF I'M ALREADY LOGGED AND THERES A GOTO, REDIRECT THERE */}
+                    { isLoggedIn && goto && <ReactRouterDOM.Redirect to={goto}/> }
+                    {/* (new URLSearchParams(window.location.search)).get("goto") && <ReactRouterDOM.Redirect to={(new URLSearchParams(window.location.search)).get("goto")}/>*/ }
+                    
+                    {/* IF IM NOT LOGGED IN... REDIRECT TO LOG IN */}
+                    { !isLoggedIn && <ReactRouterDOM.Route path="/login2" render={()=>  <Login onLogIn={onLogIn} /> } />}
+                    {/* ADD IF LOGGED IN AND WANNA GO LOGIN PAGE... REDIRECT WHERE TO ?*/}
+                    
+                    <div className="content">
+
+
+                        {isLoggedIn && <Breadcrumb sectionlist={sectionlist} />}
+
+                        <ReactRouterDOM.Route path="/" exact render={()=> { 
+                            return isLoggedIn ? <h1>Welcome to the internal portal</h1>
+                            :  <ReactRouterDOM.Redirect to="/login2?goto=/" />
+                        }} /> 
+
+
+                        {/*{ FOR EACH PATH, RENDER IF ITS LOGGGED IN OR REDIRECT WITH GOTO />}*/}
+                        <ReactRouterDOM.Route path="/new" render={()=> { 
+                            return isLoggedIn ? <a onClick={openSlideNav} data-target="main-slidenav" className="waves-effect waves-light btn">button</a> :  <ReactRouterDOM.Redirect to="/login2?goto=/new" />
+                        }} /> 
+                        <ReactRouterDOM.Route path="/system/viewstats" render={()=> { 
+                            return isLoggedIn ? <SystemView /> :  <ReactRouterDOM.Redirect to="/login2?goto=/system/viewstats" />
+                        }} /> 
+                        <ReactRouterDOM.Route path="/documents2" render={()=> { 
+                            return isLoggedIn ? <DocumentsView setsectionlist={setsectionlist} /> :  <ReactRouterDOM.Redirect to={`/login2?goto=/documents2${window.location.search}`} />
+                        }} /> 
+                        <ReactRouterDOM.Route path="/links" render={()=> { 
+                            return isLoggedIn ? <Links /> :  <ReactRouterDOM.Redirect to={`/login2?goto=/links${window.location.search}`} />
+                        }} /> 
+                        <ReactRouterDOM.Route path="/recipents" render={()=> { 
+                            return isLoggedIn ? <RecipentsView /> :  <ReactRouterDOM.Redirect to={`/login2?goto=/recipents${window.location.search}`} />
+                        }} /> 
+                    </div>
+                </>
             
-            {/* IF I'M ALREADY LOGGED AND THERES A GOTO, REDIRECT THERE */}
-            { isLoggedIn && goto && <ReactRouterDOM.Redirect to={goto}/> }
-            {/* (new URLSearchParams(window.location.search)).get("goto") && <ReactRouterDOM.Redirect to={(new URLSearchParams(window.location.search)).get("goto")}/>*/ }
-            
-            {/* IF IM NOT LOGGED IN... REDIRECT TO LOG IN */}
-            { !isLoggedIn && <ReactRouterDOM.Route path="/login2" render={()=>  <Login onLogIn={onLogIn} /> } />}
-            {/* ADD IF LOGGED IN AND WANNA GO LOGIN PAGE... REDIRECT WHERE TO ?*/}
-            
-            <div className="content">
-
-
-                {isLoggedIn && <Breadcrumb sectionlist={sectionlist} />}
-
-                <ReactRouterDOM.Route path="/" exact render={()=> { 
-                    return isLoggedIn ? <h1>Welcome to the internal portal</h1>
-                    :  <ReactRouterDOM.Redirect to="/login2?goto=/" />
-                }} /> 
-
-
-                {/*{ FOR EACH PATH, RENDER IF ITS LOGGGED IN OR REDIRECT WITH GOTO />}*/}
-                <ReactRouterDOM.Route path="/new" render={()=> { 
-                    return isLoggedIn ? <a onClick={openSlideNav} data-target="main-slidenav" className="waves-effect waves-light btn">button</a> :  <ReactRouterDOM.Redirect to="/login2?goto=/new" />
-                }} /> 
-                <ReactRouterDOM.Route path="/system/viewstats" render={()=> { 
-                    return isLoggedIn ? <SystemView /> :  <ReactRouterDOM.Redirect to="/login2?goto=/system/viewstats" />
-                }} /> 
-                <ReactRouterDOM.Route path="/documents2" render={()=> { 
-                    return isLoggedIn ? <DocumentsView setsectionlist={setsectionlist} /> :  <ReactRouterDOM.Redirect to={`/login2?goto=/documents2${window.location.search}`} />
-                }} /> 
-                <ReactRouterDOM.Route path="/links" render={()=> { 
-                    return isLoggedIn ? <Links /> :  <ReactRouterDOM.Redirect to={`/login2?goto=/links${window.location.search}`} />
-                }} /> 
-                <ReactRouterDOM.Route path="/recipents" render={()=> { 
-                    return isLoggedIn ? <RecipentsView /> :  <ReactRouterDOM.Redirect to={`/login2?goto=/recipents${window.location.search}`} />
-                }} /> 
-            </div>
+            }
+            </>
         </ReactRouterDOM.BrowserRouter>
     )
 }
