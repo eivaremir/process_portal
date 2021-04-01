@@ -88,8 +88,8 @@ function App() {
         //const urlParams = new URLSearchParams(window.location.search);
     }
     const openSlideNav = (e) =>{
-        let slidenav = document.querySelector("#"+e.target.dataset.target)
         
+        let slidenav = document.querySelector("#"+e.target.dataset.target)
         slidenav = M.Sidenav.init(slidenav);
         slidenav.open()
     }
