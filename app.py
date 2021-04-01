@@ -57,7 +57,8 @@ def load_user(id):
 # views
 @app.route("/")
 def home():
-	return render_template("home.html",active='home',user=current_user,acl = acl.acl)
+	return __react__()
+	#return render_template("home.html",active='home',user=current_user,acl = acl.acl)
 
 react = ""
 reactDOM = ""

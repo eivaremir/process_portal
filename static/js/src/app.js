@@ -98,7 +98,7 @@ function App() {
     return (
         <ReactRouterDOM.BrowserRouter>
             <Header openSlideNav={openSlideNav} isLoggedIn={isLoggedIn} logOut={logOut}/>
-            <Sidenav session={session} id="main-slidenav"/>
+            <Sidenav  isLoggedIn={isLoggedIn} session={session} id="main-slidenav"/>
             
             {/* IF I'M ALREADY LOGGED AND THERES A GOTO, REDIRECT THERE */}
             { isLoggedIn && goto && <ReactRouterDOM.Redirect to={goto}/> }
@@ -109,8 +109,14 @@ function App() {
             {/* ADD IF LOGGED IN AND WANNA GO LOGIN PAGE... REDIRECT WHERE TO ?*/}
             
             <div className="content">
+
+
                 {isLoggedIn && <Breadcrumb sectionlist={sectionlist} />}
 
+                <ReactRouterDOM.Route path="/" exact render={()=> { 
+                    return isLoggedIn ? <h1>Welcome to the internal portal</h1>
+                    :  <ReactRouterDOM.Redirect to="/login2?goto=/" />
+                }} /> 
 
 
                 {/*{ FOR EACH PATH, RENDER IF ITS LOGGGED IN OR REDIRECT WITH GOTO />}*/}
