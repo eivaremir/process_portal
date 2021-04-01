@@ -29,10 +29,10 @@ function DocumentsView({ setsectionlist }) {
         const getDocuments = async ()=>{
             const Documents = await fetchDocuments()
             setdocuments(Documents)
-
+            
         }
         getDocuments()
-    },[])
+    },[editdoc])
     const fetchDocuments = async ()=>{
         const res = await fetch("/documents/get")
         const data = await res.json()
