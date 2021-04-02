@@ -183,7 +183,11 @@ class CreateDocument extends React.Component{
                       }
                     }
                   },
-                  simple_image: SimpleImage,
+                  simpleImage: SimpleImage,
+                  inlineImage: {
+                    class: InlineImage,
+                    inlineToolbar: true,
+                  },
                   checklist: {
                     class: Checklist,
                     inlineToolbar: true,
