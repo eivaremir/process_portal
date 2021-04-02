@@ -604,9 +604,15 @@ def upload_file(key):
 	   f = request.files[key]
 	   
 	   print(secure_filename(f.filename))
-	   f.save(app.config['UPLOAD_FOLDER']+"/"+secure_filename(f.filename))
-	   return 'file uploaded successfully'
-
+	   fname = app.config['UPLOAD_FOLDER']+"/"+secure_filename(f.filename)
+	   f.save(fname)
+	   return jsonify({
+		   "success":1,
+		   "file":{
+			   #"url":"http://localhost"+port+"/"+fname[2:]
+			   "url":assets_server+fname[1:]
+		   }
+	   })
 
 
 # INIT APP
@@ -619,9 +625,9 @@ with app.app_context():
 
 react = "react.production.min.js"
 reactDOM = "react-dom.production.min.js"
-
+assets_server = ""
 if __name__ == '__main__':
 	react = "react.development.js"
 	reactDOM = "react-dom.development.js"
-	
+	assets_server = "http://localhost"
 	app.run(debug=True)
