@@ -1,7 +1,7 @@
 from flask import Flask, render_template, request, flash, jsonify, redirect,url_for, abort,send_file
 from flask_bootstrap import Bootstrap
 from flask_login import LoginManager,login_user, logout_user, login_required, current_user
-
+from werkzeug.utils import secure_filename
 # models
 """
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -33,7 +33,7 @@ login_manager.login_view = '.login'
 Bootstrap(app)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///internal_portal.sqlite3'
 app.config['SECRET_KEY']='12345678'
-
+app.config['UPLOAD_FOLDER'] = "./assets"
 
 def __react__():
 	return render_template("index.html",react=react,reactDOM=reactDOM)
@@ -591,6 +591,23 @@ def debug():
 @app.route("/f/d/<path>",methods=['GET'])
 def download_file(path):
 	return send_file(path, as_attachment=True,)
+
+#####################################################################################
+# UPLOADER
+#####################################################################################
+
+@app.route('/uploader/<key>', methods = ['GET', 'POST'])
+def upload_file(key):
+   if request.method == 'POST':
+	   print(request.files)
+	   print(dir(request.files))
+	   f = request.files[key]
+	   
+	   print(secure_filename(f.filename))
+	   f.save(app.config['UPLOAD_FOLDER']+"/"+secure_filename(f.filename))
+	   return 'file uploaded successfully'
+
+
 
 # INIT APP
 with app.app_context():
