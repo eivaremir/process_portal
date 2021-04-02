@@ -16,7 +16,7 @@ class DocumentEditor extends React.Component{
   async componentDidMount() {
     let response ;
     const editorJSConfig = {};
-    const config = {
+    let config = {
       placeholder: 'Start writing here...',
       holder:"editor",
       readOnly: this.props.readonly,
@@ -75,6 +75,19 @@ class DocumentEditor extends React.Component{
                 title: "2 columns",
               },
           },
+          table: Table,
+          Marker: {
+              class: Marker,
+              shortcut: 'CMD+SHIFT+M',
+            },
+          delimiter: Delimiter,
+          inlineCode: {
+              class: InlineCode,
+              shortcut: 'CMD+SHIFT+C',
+            },
+            warning: Warning,
+            raw: RawTool,
+            code: CodeTool
       }, 
       data: this.props.data
     }

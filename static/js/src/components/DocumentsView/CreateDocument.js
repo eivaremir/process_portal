@@ -161,6 +161,19 @@ class CreateDocument extends React.Component{
                       title: "2 columns",
                     },
                 },
+                table: Table,
+                Marker: {
+                    class: Marker,
+                    shortcut: 'CMD+SHIFT+M',
+                  },
+                delimiter: Delimiter,
+                inlineCode: {
+                    class: InlineCode,
+                    shortcut: 'CMD+SHIFT+C',
+                  },
+                  warning: Warning,
+                  raw: RawTool,
+                  code: CodeTool
             }, 
         })
         this.setState({
