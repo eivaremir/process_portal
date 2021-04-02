@@ -1,9 +1,4 @@
 
-import React from 'react'
-
-
-
-
 
 //function CreateDocument({toggleShow}) {
 class CreateDocument extends React.Component{    

@@ -103,8 +103,8 @@ function App() {
                 
                     <div style={{    width: "300px",textAlign: "center", position:" absolute", top: "50%", left: "50%", transform: "translate(-50%,-50%)"}}>
                         <span>Loading...</span>
-                        <div class="progress" style={{height: "7px"}}>
-                            <div class="indeterminate" style={{background: "#132e7f",height: "10px"}}></div>
+                        <div className="progress" style={{height: "7px"}}>
+                            <div className="indeterminate" style={{background: "#132e7f",height: "10px"}}></div>
                         </div>
                     </div>            
                 :
