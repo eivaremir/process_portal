@@ -98,6 +98,10 @@ class DocumentEditor extends React.Component{
               }
             },
             simple_image: SimpleImage,
+            inlineImage: {
+              class: InlineImage,
+              inlineToolbar: true,
+            },
             checklist: {
               class: Checklist,
               inlineToolbar: true,
