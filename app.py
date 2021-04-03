@@ -314,8 +314,46 @@ def recipents():
 	return __react__()
 @app.route("/recipents/get")
 def get_recipents():
-
 	return __react__()
+
+@app.route("/recipents/import",methods=['PUT'])
+def import_recipents():
+	try:
+		content = request.get_json() # returns dict
+		if not content: #js fix	
+			content = json.loads(request.get_data())
+		
+		print(content)
+		
+		# first split into new lines
+		# split by commas
+		# parse and reunite
+		parsed_data = [ f'{y.__str__()[1:-1]}' for y in [x.split(",") for x in content['data'].split("\n")]]
+		
+		columns = parsed_data[0]
+		
+		query = f"INSERT INTO RECIPENTS ({columns}) VALUES "
+		for values in parsed_data[1:]:
+			query+= f"({values}),"
+		
+		query = query[:-1]+ ";"
+		
+		cursor = [db.engine.execute(q) for q in query.split(";")]
+		
+		resp = {
+			"status": True,
+			"data": parsed_data,
+			"query":query,
+			"columns": columns
+		}
+	except Exception as ex:
+		resp = {
+			"status": False,
+			"exception": str(ex)
+		}
+	print(resp)
+	return jsonify(resp)
+
 #####################################################################################
 # USERS
 #####################################################################################

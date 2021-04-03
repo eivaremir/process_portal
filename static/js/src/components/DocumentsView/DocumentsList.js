@@ -11,11 +11,11 @@ function DocumentsList({ onShowCreate, onDocumentSelected, documents}) {
             <a onClick={onShowCreate} style={{position:"fixed",bottom:"40px",right:"40px"}} className="btn-floating btn-large waves-effect waves-light red">
                 <i className="material-icons">add</i>
             </a>
-            <table>
+            <table  className="table table-sm">
                 <thead>
-                    <tr>
+                    <tr >
                         {documents && documents.columns.map((column,c)=>(
-                            c < documents.columns.length-1 ? <td key={"column-name-"+c}>{column}</td> : null
+                            c < documents.columns.length-1 ? <th scope="col" key={"column-name-"+c}>{column}</th> : null
                         ))}
                         
                     </tr>

@@ -68,19 +68,43 @@ class CreateDocument extends React.Component{
                 </div>
                 
                 <h1>{this.props.title}</h1>
-                <div className="row" style={{margin: "40px 5px"}}>
-                    <div className="input-field col s4">
-                        <label htmlFor="document_code">Code</label>
-                        <input id="document_code" value={this.state.document_code} type="text" className="validate" onChange={(e) => this.setState({document_code: e.target.value})}/>
-                        
+                
+                <form class="row g-3 mb-3 mt-3">
+                  <div class="col-auto">
+                    <label htmlFor="document_code"><strong>Code</strong></label>
+                    <input type="text" class="form-control" value={this.state.document_code} id="document_code" onChange={(e) => this.setState({document_code: e.target.value})} />
+                  </div>
+                  <div class="col-auto">
+                    <label htmlFor="document_name"><strong>Title</strong></label>
+                    <input type="text" class="form-control" id="document_name" value={this.state.document_name} onChange={this.onNameChanged.bind(this)}/>
+                  </div>
+                  <div class="col-auto">
+                    <label for="inputPassword2"><strong>Language</strong></label>
+                    <select value={this.state.document_lang}  onChange={this.onLangChanged.bind(this)} class="form-select" aria-label="Default select example">
+                      <option selected>Language</option>
+                      <option value="es">Spanish</option>
+                      <option value="en">Enlgish</option>
+                    </select>
+                  </div>
+                </form>
+                {/*<div className="row" style={{margin: "40px 5px"}}>
+                    
+                    <div className="input-group mb-3 row">
+                        <div className="col-md-3">
+                          <label htmlFor="document_code" className="form-label">Code</label>
+                          </div>
+                        <div className="col-md-4">
+                        <input id="document_code" value={this.state.document_code} type="text" className="form-control" onChange={(e) => this.setState({document_code: e.target.value})}/>
+                        </div>
                     </div>
-                    <div className="input-field col s4">
+                    <div className="input-group mb-3">
+                        
                         <label htmlFor="document_name">Document title</label>
-                        {console.log(this.state.document_name)}
-                        <input id="document_name" type="text" className="validate" value={this.state.document_name} onChange={this.onNameChanged.bind(this)}/>
+                        
+                        <input id="document_name" type="text" className="form-control" value={this.state.document_name} onChange={this.onNameChanged.bind(this)}/>
                         
                     </div>
-                    <div className="input-field col s4">
+                    <div className="input-group mb-3">
                         <label>Document language</label>
                         <select value={this.state.document_lang}  onChange={this.onLangChanged.bind(this)}>
                             <option value="es">Spanish</option>
@@ -88,7 +112,7 @@ class CreateDocument extends React.Component{
                         </select>
                         
                     </div>
-                </div>
+        </div>*/}
                 
                 <div id="editor"></div>
             </div>
@@ -97,7 +121,7 @@ class CreateDocument extends React.Component{
     componentDidMount() {
 
         var elems = document.querySelectorAll('select');
-        var instances = M.FormSelect.init(elems);
+        //var instances = M.FormSelect.init(elems);
 
 
 

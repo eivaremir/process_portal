@@ -25,6 +25,7 @@ function App() {
     const [goto, setgoto] = React.useState(undefined)
     const [sectionlist, setsectionlist] = React.useState(['Documents'])
     const [session, setsession] = React.useState({})
+    
     //
 
     React.useEffect( () => {
@@ -41,7 +42,7 @@ function App() {
     
         getSession()
         
-    },[])
+    },[isLoggedIn])
     
     React.useEffect( () => {
         // set goto if its present
@@ -100,19 +101,16 @@ function App() {
             <>
             {/* IF WE DONT KNOW IF IM LOGGED IN OR NOT */}
             { isLoggedIn === 0 ? 
+                <div style={{top:"50%",left:"50%",position:"absolute",transform:"translate(-50%,-50%)"}}>
+                    <div class="spinner-border text-primary" role="status"></div>        
+                </div>
                 
-                    <div style={{    width: "300px",textAlign: "center", position:" absolute", top: "50%", left: "50%", transform: "translate(-50%,-50%)"}}>
-                        <span>Loading...</span>
-                        <div className="progress" style={{height: "7px"}}>
-                            <div className="indeterminate" style={{background: "#132e7f",height: "10px"}}></div>
-                        </div>
-                    </div>            
                 :
                 
                 <>
                 {/* IF WE ALREADY KNOW IF IM LOGGED IN OR NOT */}
-                    <Header openSlideNav={openSlideNav} isLoggedIn={isLoggedIn} logOut={logOut}/>
-                    <Sidenav  isLoggedIn={isLoggedIn} session={session} id="main-slidenav"/>
+                    {/*<Header openSlideNav={openSlideNav} isLoggedIn={isLoggedIn} logOut={logOut}/>*/}
+                    {isLoggedIn && <Sidenav  isLoggedIn={isLoggedIn} logOut={logOut} session={session} id="main-slidenav"/>}
                     
                     {/* IF I'M ALREADY LOGGED AND THERES A GOTO, REDIRECT THERE */}
                     { isLoggedIn && goto && <ReactRouterDOM.Redirect to={goto}/> }
@@ -122,7 +120,7 @@ function App() {
                     { !isLoggedIn && <ReactRouterDOM.Route path="/login2" render={()=>  <Login onLogIn={onLogIn} /> } />}
                     {/* ADD IF LOGGED IN AND WANNA GO LOGIN PAGE... REDIRECT WHERE TO ?*/}
                     
-                    <div className="content">
+                    <div className={isLoggedIn && "content"}>
 
 
                         {isLoggedIn && <Breadcrumb sectionlist={sectionlist} />}
