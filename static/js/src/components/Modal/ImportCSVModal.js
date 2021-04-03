@@ -11,8 +11,8 @@ function ImportCSVModal({id}) {
     const [failToast, setfailToast] = React.useState(undefined)
 
     React.useEffect(() => {
-        const succToast =new bootstrap.Toast( document.querySelector('#import-success'))
-        const fToast = new bootstrap.Toast( document.querySelector('#import-failed')) 
+        const succToast =new bootstrap.Toast( document.querySelector('#import-success'),{autohide: true,delay:7500})
+        const fToast = new bootstrap.Toast( document.querySelector('#import-failed'),{autohide: true,delay:7500}) 
         setsuccessToast(succToast)
         setfailToast(fToast)
     }, [])

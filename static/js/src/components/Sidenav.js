@@ -22,51 +22,51 @@ function Sidenav({id,session,logOut}) {
     return (
         
 
-        <div id="sidenav" class="d-flex flex-column p-3 text-white bg-dark" style={{width: "280px"}}>
-            <a href="/" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-white text-decoration-none" >
-                <svg class="bi me-2" width="40" height="32"><use href="#bootstrap"></use></svg>
-                <span class="fs-4">
+        <div id="sidenav" className="d-flex flex-column p-3 text-white bg-dark" style={{width: "280px"}}>
+            <a href="/" className="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-white text-decoration-none" >
+                <svg className="bi me-2" width="40" height="32"><use href="#bootstrap"></use></svg>
+                <span className="fs-4">
                     <img src="/static/img/ZumaMarkets_black_backpng.png" style={{width:"100%"}}/>
                 </span>
             </a>
             <hr/>
-            <ul class="nav nav-pills flex-column mb-auto">
+            <ul className="nav nav-pills flex-column mb-auto">
                 
                 <li>
                 
                     <ReactRouterDOM.Link onClick={onLinkClicked} to="/documents2"  className={`nav-link text-white ${path == "/documents2" ? "active":""}`} href="#!">
-                        <i class="bi me-2 bi-house"></i>
+                        <i className="bi me-2 bi-house"></i>
                         Documents
                     </ReactRouterDOM.Link>
                 </li>
                 <li>
                     <ReactRouterDOM.Link onClick={onLinkClicked} to="/recipents"  className={`nav-link text-white ${path == "/recipents" ? "active":""}`} href="#!">
                     
-                        <i class="bi me-2 bi-person-lines-fill"></i>
+                        <i className="bi me-2 bi-person-lines-fill"></i>
                         Recipents
                     </ReactRouterDOM.Link>
                 </li>
                 <li>
                     <ReactRouterDOM.Link onClick={onLinkClicked} to="/links"  className={`nav-link text-white ${path == "/links" ? "active":""}`} href="#!">
                     
-                        <i class="bi me- bi-link-45deg"></i>
+                        <i className="bi me- bi-link-45deg"></i>
                         Links
                     </ReactRouterDOM.Link>
                 </li>
                 
             </ul>
             <hr />
-            <div class="dropdown">
-                <a href="#" class="d-flex align-items-center text-white text-decoration-none dropdown-toggle" id="dropdownUser1" data-bs-toggle="dropdown" aria-expanded="false">
-                <img src="/static/img/user.png" alt="mdo" width="32" height="32" class="rounded-circle me-2"/>
+            <div className="dropdown">
+                <a href="#" className="d-flex align-items-center text-white text-decoration-none dropdown-toggle" id="dropdownUser1" data-bs-toggle="dropdown" aria-expanded="false">
+                <img src="/static/img/user.png" alt="mdo" width="32" height="32" className="rounded-circle me-2"/>
                 <strong>{session.name}</strong>
                 </a>
-                <ul class="dropdown-menu dropdown-menu-dark text-small shadow" aria-labelledby="dropdownUser1">
-                    {/*<li><a class="dropdown-item" href="#">New project...</a></li>
-                    <li><a class="dropdown-item" href="#">Settings</a></li>
-                    <li><a class="dropdown-item" href="#">Profile</a></li>
-                    <li><hr class="dropdown-divider"/></li>*/}
-                    <li><a class="dropdown-item" href="#" onClick={logOut}>Sign out</a></li>
+                <ul className="dropdown-menu dropdown-menu-dark text-small shadow" aria-labelledby="dropdownUser1">
+                    {/*<li><a className="dropdown-item" href="#">New project...</a></li>
+                    <li><a className="dropdown-item" href="#">Settings</a></li>
+                    <li><a className="dropdown-item" href="#">Profile</a></li>
+                    <li><hr className="dropdown-divider"/></li>*/}
+                    <li><a className="dropdown-item" href="#" onClick={logOut}>Sign out</a></li>
                 </ul>
             </div>
         </div>

@@ -14,12 +14,12 @@ export default class Toast extends React.Component {
                     <strong className="me-auto">{this.props.title}</strong>
                     <small>{this.props.hright}</small>
                 </div>}
-                <div class="d-flex">
+                <div className="d-flex">
                 <div className="toast-body">
                     {this.props.message}
                     
                 </div>
-                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+                <button type="button" className="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
                 </div>
             </div>
         )

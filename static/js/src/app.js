@@ -102,7 +102,7 @@ function App() {
             {/* IF WE DONT KNOW IF IM LOGGED IN OR NOT */}
             { isLoggedIn === 0 ? 
                 <div style={{top:"50%",left:"50%",position:"absolute",transform:"translate(-50%,-50%)"}}>
-                    <div class="spinner-border text-primary" role="status"></div>        
+                    <div className="spinner-border text-primary" role="status"></div>        
                 </div>
                 
                 :

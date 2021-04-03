@@ -69,18 +69,18 @@ class CreateDocument extends React.Component{
                 
                 <h1>{this.props.title}</h1>
                 
-                <form class="row g-3 mb-3 mt-3">
-                  <div class="col-auto">
+                <form className="row g-3 mb-3 mt-3">
+                  <div className="col-auto">
                     <label htmlFor="document_code"><strong>Code</strong></label>
-                    <input type="text" class="form-control" value={this.state.document_code} id="document_code" onChange={(e) => this.setState({document_code: e.target.value})} />
+                    <input type="text" className="form-control" value={this.state.document_code} id="document_code" onChange={(e) => this.setState({document_code: e.target.value})} />
                   </div>
-                  <div class="col-auto">
+                  <div className="col-auto">
                     <label htmlFor="document_name"><strong>Title</strong></label>
-                    <input type="text" class="form-control" id="document_name" value={this.state.document_name} onChange={this.onNameChanged.bind(this)}/>
+                    <input type="text" className="form-control" id="document_name" value={this.state.document_name} onChange={this.onNameChanged.bind(this)}/>
                   </div>
-                  <div class="col-auto">
+                  <div className="col-auto">
                     <label for="inputPassword2"><strong>Language</strong></label>
-                    <select value={this.state.document_lang}  onChange={this.onLangChanged.bind(this)} class="form-select" aria-label="Default select example">
+                    <select value={this.state.document_lang}  onChange={this.onLangChanged.bind(this)} className="form-select" aria-label="Default select example">
                       <option selected>Language</option>
                       <option value="es">Spanish</option>
                       <option value="en">Enlgish</option>

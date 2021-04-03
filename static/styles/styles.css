@@ -108,6 +108,14 @@ a{
     height: 100vh;
 
 }
+/*---------------- BAGDES ----------------*/
+.badge .btn-close{
+    height: .60em;
+    width: .60em;
+    margin: 0 0 0 5px ;
+}
+
+
 
 /*
 

@@ -314,8 +314,34 @@ def recipents():
 	return __react__()
 @app.route("/recipents/get")
 def get_recipents():
-	return __react__()
-
+	
+	if False: pass
+	else:
+		res = db.engine.execute("select * from recipents;")
+		
+		cnames =  [ cname[0] for cname in [c for c in res.cursor.description ]]
+		res = [d for d in res]
+		res2 =[list(tupl) for tupl in res]
+		
+		parsed = []
+		for d in range(len(res2)):
+			parsed_doc = {}
+			for c in range(len(cnames)):
+				try:
+					parsed_doc[cnames[c]] =json.loads( res2[d][c])
+				
+				except:
+					parsed_doc[cnames[c]] = res2[d][c]
+				#print(f"column {c} {cnames[c]} data {d} {res2[d][c]}")
+			#print("----------------------------")
+			parsed.append(parsed_doc)
+		response = jsonify({
+			"status": True,
+			"parsed": parsed,
+			"columns": cnames,
+			"data": res2,
+		})
+	return response
 @app.route("/recipents/import",methods=['PUT'])
 def import_recipents():
 	try:
@@ -349,7 +375,8 @@ def import_recipents():
 	except Exception as ex:
 		resp = {
 			"status": False,
-			"exception": str(ex)
+			"exception": str(ex),
+			"query":query
 		}
 	print(resp)
 	return jsonify(resp)
