@@ -15,6 +15,9 @@ import DocumentsView from './components/DocumentsView/DocumentsView.js'
 
 // Recipents
 import RecipentsView from './components/RecipentsView.js'
+
+// Emails
+import Email from './components/Email.js'
 function App() {
 
    
@@ -146,6 +149,9 @@ function App() {
                         }} /> 
                         <ReactRouterDOM.Route path="/recipents" render={()=> { 
                             return isLoggedIn ? <RecipentsView /> :  <ReactRouterDOM.Redirect to={`/login2?goto=/recipents${window.location.search}`} />
+                        }} /> 
+                        <ReactRouterDOM.Route path="/email" render={()=> { 
+                            return isLoggedIn ? <Email /> :  <ReactRouterDOM.Redirect to={`/login2?goto=/email${window.location.search}`} />
                         }} /> 
                     </div>
                 </>

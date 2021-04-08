@@ -8,9 +8,17 @@ from flask_sqlalchemy import SQLAlchemy
 import smtplib
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
+import boto3
+from credentials import credentials
 ##########################################
 
 db =SQLAlchemy()
+
+ses = boto3.client(
+    'ses',
+    aws_access_key_id=credentials['aws_access_key_id'],
+    aws_secret_access_key=credentials['aws_secret_access_key'],
+)
 
 class Setup(db.Model):
     __tablename__ = 'setup'
@@ -55,13 +63,112 @@ class Role(db.Model):
     description = db.Column(db.String(200),nullable=False)
 
 
+class EmailQueue(db.Model):
+    __tablename__ = 'email_queue'
+    id_email_queued = db.Column(db.Integer,primary_key=True)
+    id_recipent = db.Column(db.String(), db.ForeignKey('recipents.address'))
+    id_email =  db.Column(db.Integer, db.ForeignKey('emails.id_email'))
+    email_sent = db.Column(db.Boolean(),nullable=False)
+    response = db.Column(db.String(),nullable=False)
+
+    @classmethod
+    def add_emails(cls,emails):
+        queue = []
+        for email in emails:
+            print(email)
+            
+            queue.append(EmailQueue(
+                id_recipent= email['id_recipent'],
+                id_email=email['id_email'],
+                email_sent=0,
+                response="")
+            )
+            print("queue",queue)
+        #print(queue[0])
+        #print(type(queue[0]))
+        db.session.add_all(queue)
+        db.session.commit()
+
+    def ses_send(self):
+        
+        email = Email.query.filter_by(id_email=self.id_email).first()
+        #recipent = Recipent.query.filter_by(address =id_recipent).first()
+        response = ses.send_email(
+            Source = f"{email.email_from_name} <{email.email_from}>",
+            
+            Destination = {
+                'ToAddresses': [self.id_recipent]
+            },
+            Message = {
+                "Subject":{
+                    'Data': email.subject,
+                    'Charset': 'latin1'
+                },
+                "Body":{
+                    'Html':{
+                        'Data':email.html,
+                        'Charset': 'utf-8'
+                    }
+                }
+            }
+
+
+        )
+        return response
+
 class Email(db.Model):
     __tablename__ = 'emails'
     id_email = db.Column(db.Integer,primary_key=True)
     html = db.Column(db.String(),nullable=False)
     subject = db.Column(db.String(255),nullable=False)
+    email_from_name = db.Column(db.String(30),nullable=False)
     email_from = db.Column(db.String(30),nullable=False)
+    #email_to = db.Column(db.String(30),nullable=False)
+     
+    @classmethod
+    def compute_recipents(cls,recipents):
+        return recipents(",")
     
+    def ses_send(self):
+        try:
+            response = ses.send_email(
+                Source = f"{self.email_from_name} <{self.email_from}>",
+                
+                Destination = {
+                    'ToAddresses': self.compute_recipents()
+                },
+                Message = {
+                    "Subject":{
+                        'Data': self.subject,
+                        'Charset': 'latin1'
+                    },
+                    "Body":{
+                        'Html':{
+                            'Data':self.html,
+                            'Charset': 'utf-8'
+                        }
+                    }
+                }
+
+
+            )
+        except Exception as ex:
+            response = str(ex)
+        
+        return response
+
+
+    @classmethod
+    def create_element(cls,html,subject,email_from_name="",email_from=""):
+        email = Email(html=html,subject=subject,email_from_name=email_from_name,email_from=email_from)
+        
+        # registrar nueva entrada en la BD
+        db.session.add(email)
+
+        # registramos acciones
+        db.session.commit()
+        return email
+
 
     def send(self,to,s):
         self.msg = MIMEMultipart('alternative')

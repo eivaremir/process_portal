@@ -2,6 +2,8 @@ from flask import Flask, render_template, request, flash, jsonify, redirect,url_
 from flask_bootstrap import Bootstrap
 from flask_login import LoginManager,login_user, logout_user, login_required, current_user
 from werkzeug.utils import secure_filename
+import threading
+import time
 # models
 """
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -32,6 +34,7 @@ login_manager.init_app(app)
 login_manager.login_view = '.login'
 Bootstrap(app)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///internal_portal.sqlite3'
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
 app.config['SECRET_KEY']='12345678'
 app.config['UPLOAD_FOLDER'] = "./assets"
 
@@ -584,6 +587,111 @@ def unsubscribe(email_address):
 	return redirect("https://zumamarkets.com")
 
 
+
+@app.route("/email/save",methods=['PUT'])
+def save_email():
+	content = request.get_json() 
+	try:
+		email = Email.create_element(
+			html=content['body'],
+			subject=content['subject'],
+			email_from_name=content['from_name'],
+			email_from=content['from'],
+			email_to=content['to']
+		)
+		response = {
+			"status": True,
+			"html":email.html,
+			"subject":email.subject,
+			"email_from_name":email.email_from_name,
+			"email_from":email.email_from,
+			"email_to":email.email_to
+		}
+	except Exception as ex:
+		response:{
+			"status":False,
+			"exception":str(ex)
+		}
+	return jsonify(content)
+
+
+
+def batch_send_emails():
+	with app.app_context():
+
+		pending_emails = [x for x in db.engine.execute("SELECT id_email_queued FROM email_queue where not email_sent;")]
+		
+		
+		for email in pending_emails:
+			eq = EmailQueue.query.filter_by(id_email_queued = email[0]).first()
+			try:
+				
+				response = eq.ses_send()
+				eq.response = json.dumps(response)
+				eq.email_sent = 1
+				db.session.add(eq)
+				db.session.commit()
+				print("Sent eq",email[0])
+				time.sleep(0.01)
+			except Exception as ex:
+				db.session.rollback()
+				eq.response = "Exception: "+str(ex)
+				print("Exception with eq",email[0],str(ex))
+				eq.email_sent = 0
+				db.session.add(eq)
+				db.session.commit()	
+batch_send_emails_thread = threading.Thread(target=batch_send_emails)
+
+
+@app.route("/email/send",methods=["PUT"])
+def send_email():
+	content = request.get_json()
+
+	try:
+		# FOR A FUTURE SET THIS AS AN INTERNAL SAVE REQUEST
+		email = Email.create_element(
+			html=content['body'],
+			subject=content['subject'],
+			email_from_name=content['from_name'],
+			email_from=content['from'],
+			#email_to=content['to']
+		)
+		q = ["SELECT address FROM RECIPENTS WHERE address in "+str(tuple(content['to'].split(",")))+" AND subscribed;"]
+
+		res = db.engine.execute(q[0])
+		recipents = [list(y) for y in [list(x) for x in res]]
+		
+		# for each valid recipent, create item in queue
+		for r in range(len(recipents)):
+			recipents[r]={
+				"id_recipent": recipents[r][0],
+				"id_email": email.id_email # id just created
+			}
+
+		#EmailQueue.add_emails(recipents)
+
+		# start batch thread
+		#batch_send_emails_thread.start()
+
+		response = {
+			"query": q,
+			"data": recipents
+		}
+		return jsonify(response)
+
+	except Exception as ex:
+		print(ex)
+		response={
+			"status":False,
+			"exception":str(ex)
+		}
+	return jsonify(response)
+
+
+
+@app.route("/email/", methods=['GET'])
+def mail():
+	return __react__()
 
 
 #####################################################################################
