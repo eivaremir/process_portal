@@ -9,6 +9,7 @@ import smtplib
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 import boto3
+from botocore.config import Config
 from credentials import credentials
 ##########################################
 
@@ -18,6 +19,7 @@ ses = boto3.client(
     'ses',
     aws_access_key_id=credentials['aws_access_key_id'],
     aws_secret_access_key=credentials['aws_secret_access_key'],
+    config=Config(region_name="us-east-2")
 )
 
 class Setup(db.Model):

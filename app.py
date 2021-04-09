@@ -384,6 +384,22 @@ def import_recipents():
 	print(resp)
 	return jsonify(resp)
 
+
+@app.route("/tags")
+def get_tags():
+	res = db.engine.execute("SELECT tags from recipents; ")
+	tags = [x for x in res]
+	r_tags =[]
+	for g in [x.split("|") for x in [ y[0] for y in tags]]:
+		r_tags+=g
+	r_tags =list(filter(lambda tag: tag!='' ,list(dict.fromkeys(r_tags))))
+
+	return jsonify({
+		"status":True,
+		"data": r_tags
+	})
+	
+
 #####################################################################################
 # USERS
 #####################################################################################
@@ -697,7 +713,7 @@ def mail():
 #####################################################################################
 # REDIRECTION LINKS
 #####################################################################################
-@app.route("/rl", methods=['GET'])
+@app.route("/rl/", methods=['GET'])
 def rl():
 	return redirect("https://zumamarkets.com")
 
