@@ -1,10 +1,14 @@
-import EmailList from './Email/EmailList.js'
+
 import EmailMainNav from './Email/EmailMainNav.js'
 import EmailCreator from './Email/EmailCreator.js'
+import EmailNavigator from './Email/EmailNavigator.js'
+
+
 function Email() {
     const [showCreate, setshowCreate] = React.useState(false)
 
     const onShowCreate = ()=> {setshowCreate(!showCreate)}
+    
     return (
         <div>
             
@@ -15,9 +19,11 @@ function Email() {
                 <h1>Emails</h1>
                 <EmailMainNav onCreate={()=>setshowCreate(!showCreate)}/>
 
-                <div className="col-md-12">
-                    <EmailList />
-                </div>
+                <EmailNavigator />
+
+                
+
+                
             </>)}
             {showCreate && <div className="col-md-12">
                 <EmailCreator onGetBack={()=>setshowCreate(!showCreate)}/>

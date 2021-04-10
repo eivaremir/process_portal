@@ -38,6 +38,23 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
 app.config['SECRET_KEY']='12345678'
 app.config['UPLOAD_FOLDER'] = "./assets"
 
+def data_for_web(query):
+	res = db.engine.execute(query)
+	cnames =  [ cname[0] for cname in [c for c in res.cursor.description ]]
+	res2 =[list(tupl) for tupl in [d for d in res]]
+	parsed = []
+	for e in range(len(res2)):
+		parsed_item = {}
+		for c in range(len(cnames)):
+			parsed_item[cnames[c]] = res2[e][c]
+		parsed.append(parsed_item)
+	return jsonify({
+		"status": True,
+		"columns": cnames,
+		"data": res2,
+		"parsed": parsed
+	})
+
 def __react__():
 	return render_template("index.html",react=react,reactDOM=reactDOM)
 
@@ -598,6 +615,30 @@ def document(doc_no):
 #####################################################################################
 # EMAILS
 #####################################################################################
+
+@app.route("/email/templates")
+def template():
+	return data_for_web("select * from email_templates;")
+
+@app.route("/email/templates/save",methods=['PUT'])
+def save_template():
+	content = request.get_json()
+	print(content)
+	try:
+		template = EmailTemplate.create_element(html=content['html'],subject=content['subject'])
+		res={
+			"status":True,
+			"html":template.html,
+			"subject":template.subject
+		}
+	except Exception as ex:
+		res = {
+			"status":False,
+			"exception":str(ex)
+		}
+
+	return jsonify(res)
+
 @app.route("/email/<email_address>/unsubscribe", methods=['GET'])
 def unsubscribe(email_address):
 	return redirect("https://zumamarkets.com")
@@ -656,8 +697,15 @@ def batch_send_emails():
 				eq.email_sent = 0
 				db.session.add(eq)
 				db.session.commit()	
-batch_send_emails_thread = threading.Thread(target=batch_send_emails)
 
+
+@app.route("/email/ses/get/send_quota")
+def ses_get_send_quota():
+	return jsonify(ses.get_send_quota())
+
+@app.route("/email/get/")
+def get_email():
+	return data_for_web("select id_email,email_from_name,subject,html from emails;")
 
 @app.route("/email/send",methods=["PUT"])
 def send_email():
@@ -672,22 +720,33 @@ def send_email():
 			email_from=content['from'],
 			#email_to=content['to']
 		)
-		q = ["SELECT address FROM RECIPENTS WHERE address in "+str(tuple(content['to'].split(",")))+" AND subscribed;"]
-
+		if content['byTag']:
+			tags = str(content['tags'])[1:-1]
+			
+			cond = ""
+			for tag in content['tags']:
+				cond += f" instr(tags,'{tag}') or"
+			cond = cond[:-2]
+			q = ["SELECT address FROM RECIPENTS WHERE ("+cond+") AND SUBSCRIBED;"]
+		else:
+			expression = "('"+content['to'].split(",")[0]+"')" if len(content['to'].split(","))==1 else str(tuple(content['to'].split(",")))
+			q = ["SELECT address FROM RECIPENTS WHERE address in "+expression+" AND subscribed;"]
+			#print(q)
 		res = db.engine.execute(q[0])
 		recipents = [list(y) for y in [list(x) for x in res]]
-		
+		#print(recipents)
 		# for each valid recipent, create item in queue
 		for r in range(len(recipents)):
 			recipents[r]={
 				"id_recipent": recipents[r][0],
 				"id_email": email.id_email # id just created
 			}
-
-		#EmailQueue.add_emails(recipents)
+		
+		EmailQueue.add_emails(recipents)
 
 		# start batch thread
-		#batch_send_emails_thread.start()
+		batch_send_emails_thread = threading.Thread(target=batch_send_emails)
+		batch_send_emails_thread.start()
 
 		response = {
 			"query": q,
@@ -730,24 +789,18 @@ def redirect_link(redirect_name):
 
 @app.route("/rl/get/",methods=['GET'])
 def get_all_rl():
-	res = db.engine.execute("select * from redirect_links;")
-	cnames =  [ cname[0] for cname in [c for c in res.cursor.description ]]
 	
-	res2 =[list(tupl) for tupl in [d for d in res]]
-	print(res2)
-	parsed = []
-	for d in range(len(res2)):
-		parsed_doc = {}
-		for c in range(len(cnames)):
-			parsed_doc[cnames[c]] = res2[d][c]
-		parsed.append(parsed_doc)
-	return jsonify({
-		"status": True,
-		"columns": cnames,
-		"data": res2,
-		"parsed": parsed
-	})
+	return data_for_web("select * from redirect_links;")
 
+@app.route("/rl/save",methods=['PUT'])
+def create_redirect_link():
+	content = request.get_json()
+	rl = RedirectLink.create_element(content['link_name'],content['redirect_to'])
+	return jsonify({
+		"status":True,
+		"link_name":rl.link_name,
+		"redirect_to":rl.redirect_to
+	})
 #####################################################################################
 # SETUP
 #####################################################################################

@@ -19,7 +19,7 @@ ses = boto3.client(
     'ses',
     aws_access_key_id=credentials['aws_access_key_id'],
     aws_secret_access_key=credentials['aws_secret_access_key'],
-    config=Config(region_name="us-east-2")
+    config=Config(region_name="us-west-2")
 )
 
 class Setup(db.Model):
@@ -178,7 +178,25 @@ class Email(db.Model):
         self.msg['From'] = self.email_from
         self.msg['To'] = to
         self.msg.attach(MIMEText(self.html, 'html'))
+
+
+class EmailTemplate(db.Model):
+    __tablename__ = 'email_templates'
+    id_template = db.Column(db.Integer,primary_key=True)
+    html = db.Column(db.String(),nullable=False)
+    subject = db.Column(db.String(255),nullable=False)
+    @classmethod
+    def create_element(cls,html,subject):
+        email = EmailTemplate(html=html,subject=subject)
         
+        # registrar nueva entrada en la BD
+        db.session.add(email)
+
+        # registramos acciones
+        db.session.commit()
+        
+        return email
+
 class RedirectLink(db.Model):
     __tablename__ = 'redirect_links'
     link_name = db.Column(db.String(),primary_key=True) 
@@ -197,7 +215,17 @@ class RedirectLink(db.Model):
             return False
         
         return redirect.redirect_to
+    @classmethod
+    def create_element(cls,link_name,redirect_to):
+        rl = RedirectLink(link_name=link_name,redirect_to=redirect_to)
+        
+        # registrar nueva entrada en la BD
+        db.session.add(rl)
 
+        # registramos acciones
+        db.session.commit()
+        
+        return rl
 
 class Recipent(db.Model):
     __tablename__ = 'recipents'

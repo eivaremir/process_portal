@@ -9,9 +9,9 @@ export default class LinksList extends React.Component {
     render() {
         console.log(this.props.data)
         return (
-            <table>
+            <table class="table table-sm">
                 <thead>
-                    <tr> { this.props.links.columns.map((m)=>( <td key={m}>{m}</td> )) }</tr>
+                    <tr> { this.props.links.columns.map((m)=>( <th key={m}>{m}</th> )) }</tr>
                 </thead>
                 <tbody>
                     {

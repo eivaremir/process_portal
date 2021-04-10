@@ -1,15 +1,11 @@
 
 
-function EmailTagSelector({availableTags}) {
+function EmailTagSelector({availableTags,onTagSelected, selectedTags,removeTag}) {
 
     const [search, setsearch] = React.useState("")
-    const [selectedTags, setselectedTags] = React.useState([])
+    //const [selectedTags, setselectedTags] = React.useState([])
     
-    const onTagSelected = (e)=>{
-        const tag = e.target.dataset.tag
-        console.log(tag)
-        setselectedTags(selectedTags.concat(tag))
-    }
+   
 
     return (
         <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasRight" aria-labelledby="offcanvasRightLabel">
@@ -33,7 +29,7 @@ function EmailTagSelector({availableTags}) {
                     <div className="selected-tags my-3">
                         <h5>Selected Tags</h5>
                         {selectedTags.map((el)=>(
-                                <span key={el} data-tag={el} class="badge rounded-pill bg-primary ms-1">{el}</span>
+                                <span key={el} onClick={removeTag} data-tag={el} class="badge rounded-pill bg-primary ms-1">{el}</span>
                             ))}
                     </div>: null
                 }

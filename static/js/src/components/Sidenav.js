@@ -49,8 +49,14 @@ function Sidenav({id,session,logOut}) {
                 <li>
                     <ReactRouterDOM.Link onClick={onLinkClicked} to="/links"  className={`nav-link text-white ${path == "/links" ? "active":""}`} href="#!">
                     
-                        <i className="bi me- bi-link-45deg"></i>
+                        <i className="bi me-2 bi-link-45deg"></i>
                         Links
+                    </ReactRouterDOM.Link>
+                </li>
+                <li>
+                    <ReactRouterDOM.Link onClick={onLinkClicked} to="/email"  className={`nav-link text-white ${path == "/email" ? "active":""}`} href="#!">
+                        <i class="bi me-2 bi-envelope-fill"></i>
+                        E-Mail
                     </ReactRouterDOM.Link>
                 </li>
                 
