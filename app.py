@@ -1,5 +1,5 @@
 from flask import Flask, render_template, request, flash, jsonify, redirect,url_for, abort,send_file
-from flask_bootstrap import Bootstrap
+#from flask_bootstrap import Bootstrap
 from flask_login import LoginManager,login_user, logout_user, login_required, current_user
 from werkzeug.utils import secure_filename
 import threading
@@ -32,7 +32,7 @@ app = Flask(__name__)
 login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = '.login'
-Bootstrap(app)
+#Bootstrap(app)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///internal_portal.sqlite3'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
 app.config['SECRET_KEY']='12345678'
