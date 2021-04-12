@@ -1,3 +1,4 @@
+
 import EmailTagSelector from './EmailTagSelector.js'
 
 function EmailCreator({onGetBack}) {
@@ -15,9 +16,9 @@ function EmailCreator({onGetBack}) {
         parsed:[]
     })
 
-    const onEmailBodyChanged = (e)=>{
-        document.getElementById("email-preview").innerHTML = e.target.value
-        sethtml(e.target.value)
+    const onEmailBodyChanged = (html)=>{
+        //document.getElementById("email-preview").innerHTML = e.target.value
+        sethtml(html)
     }
     const onSelectTags = async ()=>{
         console.log("updating tags")
@@ -73,10 +74,14 @@ function EmailCreator({onGetBack}) {
     React.useEffect(() => {
         getTemplates()
     }, [])
-
+    React.useEffect(()=>{
+        console.log(html)
+        if (html!="") document.querySelector("#email-preview").contentDocument.documentElement.innerHTML = html
+        
+    },[html])
     const onTemplateClicked = (e)=>{
-        sethtml(templates.parsed[e.target.dataset.template].html)
-        document.getElementById("email-preview").innerHTML = templates.parsed[e.target.dataset.template].html
+        //sethtml(templates.parsed[e.target.dataset.template].html)
+        //document.getElementById("email-preview").innerHTML = templates.parsed[e.target.dataset.template].html
     }
     return (
         <div>
@@ -152,15 +157,15 @@ function EmailCreator({onGetBack}) {
                             </div>
                             <div className="mb-2">
                                 <label for="email_body" class="form-label">Subject</label>
-                                <textarea value={html} onChange={onEmailBodyChanged} style={{height: "400px"}} class="form-control" placeholder="<html>...</html>" id="email_body"></textarea>        
+                                <textarea value={html} onChange={(e)=>onEmailBodyChanged(e.target.value)} style={{height: "400px"}} class="form-control" placeholder="<html>...</html>" id="email_body"></textarea>        
                             </div>
                         </fieldset>
                     </form>
                 </section>   
                 <section className="col ms-1">
-                    <div id="email-preview">
+                    <iframe id="email-preview">
                         
-                    </div>
+                    </iframe>
                 </section> 
             </div>
             <div class="modal fade" id="templatesModal" tabindex="-1" aria-labelledby="templatesModalLabel" aria-hidden="true">
@@ -185,7 +190,7 @@ function EmailCreator({onGetBack}) {
                         <tbody>
                             {
                                 templates.data.map((row,r)=>(
-                                    <tr onClick={onTemplateClicked} data-template={r} style={{cursor:'pointer'}} data-bs-dismiss="modal">
+                                    <tr onClick={(e) => onEmailBodyChanged(templates.parsed[e.target.dataset.template].html)} data-template={r} style={{cursor:'pointer'}} data-bs-dismiss="modal">
                                         {
                                             row.map((column,c)=>(
                                                 <td  data-template={r}   key={r+"-"+c}>{column}</td>
