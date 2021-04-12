@@ -163,7 +163,7 @@ function EmailCreator({onGetBack}) {
                     </form>
                 </section>   
                 <section className="col ms-1">
-                    <iframe id="email-preview">
+                    <iframe style={{width:"100%",height:"100%"}} id="email-preview">
                         
                     </iframe>
                 </section> 
@@ -181,7 +181,7 @@ function EmailCreator({onGetBack}) {
                             <tr>
                                 {
                                     templates.columns.map((column,c)=>(
-                                        <th key={c}>{column}</th>
+                                        templates.columns[c]=="html" ? null :<th key={c}>{column}</th>
                                     ))
                                 }
                             </tr>
@@ -193,7 +193,7 @@ function EmailCreator({onGetBack}) {
                                     <tr onClick={(e) => onEmailBodyChanged(templates.parsed[e.target.dataset.template].html)} data-template={r} style={{cursor:'pointer'}} data-bs-dismiss="modal">
                                         {
                                             row.map((column,c)=>(
-                                                <td  data-template={r}   key={r+"-"+c}>{column}</td>
+                                                templates.columns[c]=="html" ? null : <td  data-template={r}  key={r+"-"+c}>{ column }</td>
                                             ))
                                         }
                                     </tr>
