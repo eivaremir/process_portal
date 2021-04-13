@@ -17,10 +17,14 @@ export default class LinksList extends React.Component {
                     {
                         this.props.links.data.map((link)=>(
                             <tr key={link[0]}>
-                                {link.map((attr)=>(
+                                {link.map((attr,c)=>(
                                     <td key={attr}>
                                         
-                                            {attr.match(/^https?/g) ? <a href={attr}>{attr}</a> : <span>{attr}</span>}
+                                            {attr.match(/^https?/g) ? <a href={attr}>{attr}</a> 
+                                            : this.props.links.columns[c]=="link_name"? <a href={"https://l.zumamarkets.com/"+attr}  target="_blank">{attr}</a>
+                                            : <span>{attr}</span>
+                                            
+                                            }
                                         
                                     </td>
                                 ))}
