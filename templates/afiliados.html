@@ -1,0 +1,27 @@
+<html>
+    <head>
+        <style>
+            *{
+                margin: 0px
+            }
+            .zuma-logo{
+                width: 150px;
+                height: 20px;
+            }
+
+        </style>
+        
+    </head>
+    <body>
+        <iframe id="portal" style="width: 100vw; height: 100vh" src="https://yoonit-zumafx.azurewebsites.net/" frameborder="0"></iframe>
+
+        <script>
+            zumalogo = document.querySelector("img.img-fluid[src='/img/zuma.png'")
+            zumalogo.src='https://internal.zumamarkets.com/static/img/ZumaMarkets_black_backpng.png'
+            zumalogo.removeAttribute("height")
+            zumalogo.removeAttribute("width")
+            zumalogo.style.height="20px"
+            zumalogo.style.width="150px"
+        </script>
+    </body>
+</html>

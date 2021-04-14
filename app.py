@@ -834,6 +834,12 @@ def debug():
 def download_file(path):
 	return send_file(path, as_attachment=True,)
 
+
+@app.route("/affiliates",methods=['GET'])
+def afiliados():
+	return render_template("afiliados.html")
+
+
 #####################################################################################
 # UPLOADER
 #####################################################################################
