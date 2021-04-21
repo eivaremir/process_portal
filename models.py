@@ -76,8 +76,9 @@ class EmailQueue(db.Model):
     @classmethod
     def add_emails(cls,emails):
         queue = []
+        print("preparing emails")
         for email in emails:
-            print(email)
+            
             
             queue.append(EmailQueue(
                 id_recipent= email['id_recipent'],
@@ -85,9 +86,10 @@ class EmailQueue(db.Model):
                 email_sent=0,
                 response="")
             )
-            print("queue",queue)
+            ##print("queue",queue)
         #print(queue[0])
         #print(type(queue[0]))
+        print("adding to db")
         db.session.add_all(queue)
         db.session.commit()
 
