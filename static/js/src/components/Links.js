@@ -79,7 +79,7 @@ export default class Links extends React.Component {
                 
                 
                 <div className="row">
-                    <section className="col-md-6 col-sm-12 mb-3">
+                    <section className="mb-3">
                         <LinksList links={this.state.links} />
                     </section>
                     {/*<div className="col-md-6 col-sm-12">
