@@ -862,6 +862,24 @@ def upload_file(key):
 		   }
 	   })
 
+#####################################################################################
+# WEBHOOK
+#####################################################################################
+
+@app.route('/webhooks/crm/', methods = ['GET', 'POST'])
+def crm_wh():
+	handler = {
+		"res":str(dir(request)),
+		"method":request.method,
+		"path":request.path,
+		"query_string":str(request.query_string),
+		"get_data":str(request.get_data()),
+		
+		"args":request.args
+	}
+	print(handler)
+	return jsonify(handler)
+
 
 # INIT APP
 with app.app_context():
