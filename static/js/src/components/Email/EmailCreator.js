@@ -78,10 +78,17 @@ function EmailCreator({onGetBack}) {
     }, [])
     React.useEffect(()=>{
         let rgx = /__([^\s]*?)__/g // variables regex
-        let parsed_html = html.replace(rgx, '<span style="background: #dc3545; color: white; margin: 5px; padding:2px 12px; border-radius: 10px">$1</span>')
+        let rgx_html = /<(“[^”]*”|'[^’]*’|[^'”>])*>/g // html regex
+        if (html!="") document.querySelector("#email-preview").contentDocument.documentElement.innerHTML = html
         
-        if (html!="") document.querySelector("#email-preview").contentDocument.documentElement.innerHTML = parsed_html
-        
+        // for each element in the preview
+        document.querySelector("#email-preview").contentDocument.body.querySelectorAll("*").forEach((el)=>{
+            // if it doesnt have html elements inside (final node)
+            if (!el.innerHTML.match(rgx_html)){
+                // replace all variables
+                el.innerHTML = el.innerHTML.replace(rgx, '<span style="background: #dc3545; color: white; margin: 5px; padding:2px 12px; border-radius: 10px">$1</span>')
+            }
+        })
     },[html])
     const onTemplateClicked = (e)=>{
         //sethtml(templates.parsed[e.target.dataset.template].html)
