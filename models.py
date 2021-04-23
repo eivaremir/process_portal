@@ -12,6 +12,7 @@ import boto3
 from botocore.config import Config
 from credentials import credentials
 ##########################################
+import re
 
 db =SQLAlchemy()
 
@@ -21,6 +22,26 @@ ses = boto3.client(
     aws_secret_access_key=credentials['aws_secret_access_key'],
     config=Config(region_name="us-west-2")
 )
+class Utils():
+    
+    @classmethod
+    def parse_variables(cls,content,recipent_address):
+        rgx = re.compile("__[^\s]*?__")
+        recipent = Recipent.query.filter_by(address=recipent_address).first()
+        # {**dict1, **dict2} # merge 2 dicts
+        if recipent:
+            variables = {
+                "address":recipent.address,
+                "subscribed":recipent.subscribed
+            }
+            while rgx.search(content):
+                try:
+                    content = content.replace(rgx.search(content)[0],str(variables[rgx.search(content)[0][2:-2]]))
+                # if the variable doesnt exists
+                except KeyError:
+                    content = content.replace(rgx.search(content)[0],"")
+                
+        return content
 
 class Setup(db.Model):
     __tablename__ = 'setup'
@@ -110,7 +131,7 @@ class EmailQueue(db.Model):
                 },
                 "Body":{
                     'Html':{
-                        'Data':email.html,
+                        'Data':Utils.parse_variables(email.html,self.id_recipent),
                         'Charset': 'utf-8'
                     }
                 }

@@ -73,10 +73,14 @@ function EmailCreator({onGetBack}) {
     }
     React.useEffect(() => {
         getTemplates()
+
+        
     }, [])
     React.useEffect(()=>{
-        console.log(html)
-        if (html!="") document.querySelector("#email-preview").contentDocument.documentElement.innerHTML = html
+        let rgx = /__([^\s]*?)__/g // variables regex
+        let parsed_html = html.replace(rgx, '<span style="background: #dc3545; color: white; margin: 5px; padding:2px 12px; border-radius: 10px">$1</span>')
+        
+        if (html!="") document.querySelector("#email-preview").contentDocument.documentElement.innerHTML = parsed_html
         
     },[html])
     const onTemplateClicked = (e)=>{
