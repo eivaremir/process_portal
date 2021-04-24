@@ -32,13 +32,17 @@ class Utils():
         if recipent:
             variables = {
                 "address":recipent.address,
-                "subscribed":recipent.subscribed
+                "subscribed":recipent.subscribed,
+                "name":recipent.name
             }
             while rgx.search(content):
+                   
                 try:
                     content = content.replace(rgx.search(content)[0],str(variables[rgx.search(content)[0][2:-2]]))
+                    
                 # if the variable doesnt exists
-                except KeyError:
+                except KeyError as ex:
+                    
                     content = content.replace(rgx.search(content)[0],"")
                 
         return content

@@ -56,7 +56,7 @@ export default class RecipentsView extends React.Component {
                 </div>
 
                 <div className="row">
-                    <div className="col-md-9">
+                    <div style={{overflow:"scroll"}} className="col-md-9">
                         <RecipentsList tagsIndex={this.state.tagsIndex} onRecipentSelected={this.onRecipentSelected.bind(this)} recipents={this.state.recipents}/>
                     </div>
                     <div className="col-md-3" >
