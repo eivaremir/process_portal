@@ -255,6 +255,7 @@ class Recipent(db.Model):
     address = db.Column(db.String(),primary_key=True) 
     subscribed  = db.Column(db.Boolean(),nullable=False)
     tags = db.Column(db.String(),nullable=False)
+    name = db.Column(db.String(),nullable=False)
     @classmethod
     def get_by_address(cls, address):
         # busca la línea en la bd

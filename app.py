@@ -366,24 +366,58 @@ def get_recipents():
 def import_recipents():
 	try:
 		content = request.get_json() # returns dict
+
 		if not content: #js fix	
 			content = json.loads(request.get_data())
 		
-		print(content)
+		#print(content)
 		
 		# first split into new lines
 		# split by commas
 		# parse and reunite
 		parsed_data = [ f'{y.__str__()[1:-1]}' for y in [x.split(",") for x in content['data'].split("\n")]]
-		
+		list_data = [ y for y in [x.split(",") for x in content['data'].split("\n")]]
 		columns = parsed_data[0]
 		
-		query = f"INSERT INTO RECIPENTS ({columns}) VALUES "
-		for values in parsed_data[1:]:
-			query+= f"({values}),"
 		
-		query = query[:-1]+ ";"
 		
+
+		existing_recipents = list(filter(lambda x : Recipent.get_by_address(x[0]) ,list_data[1:]))
+		missing_recipents = list(filter(lambda x : not Recipent.get_by_address(x[0]) ,list_data[1:])	)
+		
+		#print(existing_recipents)
+		#print(missing_recipents)
+		query=""
+		if len(existing_recipents)>0:
+			# for each recipent ... theres update statement
+			for recipent in existing_recipents:
+				print(recipent)
+				#query+="UPDATE RECIPENTS "
+				
+			
+				new = Recipent.get_by_address(recipent[0])
+				print(new)
+				c = 1
+				for column in list_data[0][1:]:
+					modification = f'new.{column} = "{recipent[c]}"'
+					print(modification)
+					exec(f'new.{column} = "{recipent[c]}"')
+					print(eval(f'new.{column} '))
+					c+=1
+					#new.name = "EIvar MOrales"
+				db.session.add(new)
+				db.session.commit()
+
+		if len(missing_recipents)>0:	
+			query += f"INSERT INTO RECIPENTS ({columns}) VALUES "
+			
+
+
+			for values in parsed_data[1:]: # parsed missing recipents
+				query+= f"({values}),"
+			
+			query = query[:-1]+ ";"
+			
 		cursor = [db.engine.execute(q) for q in query.split(";")]
 		
 		resp = {
@@ -396,9 +430,12 @@ def import_recipents():
 		resp = {
 			"status": False,
 			"exception": str(ex),
-			"query":query
+			
 		}
-	print(resp)
+		try: resp["query"]:query
+		except: pass
+
+	#print(resp)
 	return jsonify(resp)
 
 
@@ -896,4 +933,4 @@ if __name__ == '__main__':
 	react = "react.development.js"
 	reactDOM = "react-dom.development.js"
 	assets_server = "http://localhost"
-	app.run(debug=True)
+	app.run(debug=True,port=5000)
