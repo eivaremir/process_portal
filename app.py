@@ -404,7 +404,7 @@ def import_recipents():
 						exec(f'new.{column} = "{recipent[c]}"')
 						print(eval(f'new.{column} '))
 					except Exception as ex:
-						exceptions.append(f'Failed to update {recipent[0]} on new.{column} = "{recipent[c]}" '})
+						exceptions.append(f'Failed to update {recipent[0]} on new.{column} = "{recipent[c]}" ')
 					c+=1
 					#new.name = "EIvar MOrales"
 				db.session.add(new)
