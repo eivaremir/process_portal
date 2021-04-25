@@ -388,21 +388,23 @@ def import_recipents():
 		#print(existing_recipents)
 		#print(missing_recipents)
 		query=""
+		exceptions= []
 		if len(existing_recipents)>0:
 			# for each recipent ... theres update statement
 			for recipent in existing_recipents:
 				print(recipent)
-				#query+="UPDATE RECIPENTS "
-				
-			
 				new = Recipent.get_by_address(recipent[0])
 				print(new)
 				c = 1
 				for column in list_data[0][1:]:
-					modification = f'new.{column} = "{recipent[c]}"'
-					print(modification)
-					exec(f'new.{column} = "{recipent[c]}"')
-					print(eval(f'new.{column} '))
+					try:
+
+						modification = f'new.{column} = "{recipent[c]}"'
+						print(modification)
+						exec(f'new.{column} = "{recipent[c]}"')
+						print(eval(f'new.{column} '))
+					except Exception as ex:
+						exceptions.append(f'Failed to update {recipent[0]} on new.{column} = "{recipent[c]}" '})
 					c+=1
 					#new.name = "EIvar MOrales"
 				db.session.add(new)
@@ -424,7 +426,8 @@ def import_recipents():
 			"status": True,
 			"data": parsed_data,
 			"query":query,
-			"columns": columns
+			"columns": columns,
+			"exceptions":exceptions
 		}
 	except Exception as ex:
 		resp = {
