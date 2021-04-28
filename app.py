@@ -433,6 +433,7 @@ def import_recipents():
 		resp = {
 			"status": False,
 			"exception": str(ex),
+			"exceptions":exceptions
 			
 		}
 		try: resp["query"]:query
