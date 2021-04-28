@@ -432,7 +432,7 @@ def import_recipents():
 	except Exception as ex:
 		resp = {
 			"status": False,
-			"exception": str(ex),
+			"exception": str(ex),"exceptions":exceptions
 			
 		}
 		try: resp["query"]:query
