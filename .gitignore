@@ -2,6 +2,7 @@ __pycache__
 *.exe
 react-test
 *.sqlite3
+*.ipynb
 node_modules
 
 acl
