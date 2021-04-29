@@ -907,7 +907,7 @@ def upload_file(key):
 # WEBHOOK
 #####################################################################################
 
-@app.route('/webhooks/crm/', methods = ['GET', 'POST'])
+@app.route('/webhooks/crm', methods = ['GET', 'POST'])
 def crm_wh():
 	handler = {
 		"res":str(dir(request)),
