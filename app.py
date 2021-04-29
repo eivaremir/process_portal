@@ -717,7 +717,7 @@ def save_email():
 def batch_send_emails():
 	with app.app_context():
 
-		pending_emails = [x for x in db.engine.execute("SELECT id_email_queued FROM email_queue where not email_sent and status <> 'pause';")]
+		pending_emails = [x for x in db.engine.execute("SELECT id_email_queued FROM email_queue where not email_sent and status !='pause'or status is null;")]
 		
 		
 		for email in pending_emails:
