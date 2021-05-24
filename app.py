@@ -682,6 +682,8 @@ def save_template():
 
 @app.route("/email/<email_address>/unsubscribe", methods=['GET'])
 def unsubscribe(email_address):
+	recipent = Recipent.unsubscribe(email_address)
+	print("Unsubscribed: ",recipent)
 	return redirect("https://zumamarkets.com")
 
 
