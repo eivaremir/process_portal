@@ -445,8 +445,8 @@ def import_recipents():
 
 @app.route("/tags")
 def get_tags():
-	res = db.engine.execute("SELECT tags from recipents; ")
-	tags = [x for x in res]
+	res = db.engine.execute("SELECT tags from recipents; ");print(res)
+	tags = [x for x in res];print(tags)
 	r_tags =[]
 	for g in [x.split("|") for x in [ y[0] for y in tags]]:
 		r_tags+=g
@@ -757,7 +757,7 @@ def send_email():
 		email = Email.create_element(
 			html=content['body'],
 			subject=content['subject'],
-			email_from_name=content['from_name'],
+			email_from_name="ZumaMarkets",#content['from_name'],
 			email_from=content['from'],
 			#email_to=content['to']
 		)
@@ -893,8 +893,14 @@ def upload_file(key):
 	   f = request.files[key]
 	   
 	   print(secure_filename(f.filename))
-	   fname = app.config['UPLOAD_FOLDER']+"/"+secure_filename(f.filename)
-	   f.save(fname)
+	   fname = app.config['UPLOAD_FOLDER']+"/"+secure_filename(f.filename);print("subiendo",fname)
+	   result = f.save(fname);print(result);print({
+                   "success":1,
+                   "file":{
+                           #"url":"http://localhost"+port+"/"+fname[2:]
+                           "url":assets_server+fname[1:]
+                   }
+           })
 	   return jsonify({
 		   "success":1,
 		   "file":{
