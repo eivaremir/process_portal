@@ -880,7 +880,8 @@ def download_file(path):
 
 @app.route("/affiliates",methods=['GET'])
 def afiliados():
-	return render_template("afiliados.html")
+	#return render_template("afiliados.html")
+	return redirect("https://partners.zumamarkets.com")
 
 
 #####################################################################################
